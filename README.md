@@ -1,4 +1,4 @@
-# YomPUB
+# YomPUB　（よむパブ）
 
 **小さく、開かれ、人が手で書ける、リフロー電子書籍フォーマット。**  
 **A tiny, open, human-writable format for reflowable digital books.**
