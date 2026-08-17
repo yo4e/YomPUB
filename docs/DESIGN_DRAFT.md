@@ -62,6 +62,18 @@ DOCX import, EPUB export, PDF export, GUI editing, validation, and hosting are c
 
 If every YomPUB-specific tool disappeared, the manuscript should still be understandable to a human.
 
+### 3.8 Preserve intent; delegate typesetting
+
+YomPUB Core should preserve the author's semantic and reading intent, but it should not become a text-layout engine.
+
+For vertical writing, bidirectional text, shaping, line breaking, punctuation behavior, and similar typography, early YomPUB renderers should rely on mature standards and platform capabilities such as Unicode, HTML, CSS Writing Modes, browser layout engines, fonts, and operating-system text services wherever practical.
+
+This delegation is an implementation choice, not a permanent dependency of the file format. A future YomPUB renderer may replace or supplement browser/CSS layout if there is a real need, without requiring existing YomPUB books or the Core data model to change.
+
+The guiding boundary is:
+
+> **YomPUB stores enough meaning to render the book correctly; the renderer decides how to perform the layout.**
+
 ## 4. Is Markdown the right base?
 
 Markdown is the current leading candidate, not a sacred decision.
@@ -343,7 +355,9 @@ writing-mode: vertical-rl
 direction: ltr
 ```
 
-A Web renderer can map author intent to the platform's writing-mode capabilities.
+A Web renderer can map author intent to the platform's writing-mode capabilities. The initial reference viewer is expected to use HTML/CSS and browser layout for vertical composition rather than implementing Japanese typesetting from scratch.
+
+YomPUB should therefore record only the information that must survive across renderers. It should not encode browser-specific layout tricks or CSS declarations into the book source. If browser/CSS support is insufficient for a future requirement, the renderer may add corrective logic or eventually use another layout engine while consuming the same YomPUB data.
 
 Possible future typography extensions include:
 
@@ -401,6 +415,8 @@ HTML DOM + CSS writing modes
 Important consequences:
 
 - HTML may be an internal rendering target without becoming the authoring format.
+- CSS and browser layout are the initial rendering substrate, not part of the YomPUB data model.
+- a future non-browser or custom typesetting renderer should be able to consume the same normalized document without changing the book format.
 - one parser/AST can later feed EPUB, PDF, search indexing, accessibility tools, or virtual-space renderers.
 - author-controlled executable content is unnecessary for ordinary books and should stay out of Core.
 
@@ -507,6 +523,8 @@ The specification should be extracted from what survives real use, not from ever
 - Does a multi-file book need to exist in Core, or can v1 require one `book.md`?
 - When should `.yompub` packaging become normative?
 - What accessibility requirements belong in the base specification versus the reference viewer?
+- Which vertical-writing intentions must survive in YomPUB data because a renderer cannot safely infer them?
+- Where are CSS/browser writing-mode capabilities insufficient enough to justify renderer-side correction, without leaking layout implementation details into Core?
 
 ## 18. References informing the draft
 
