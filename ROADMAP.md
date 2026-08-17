@@ -210,7 +210,10 @@ Before 1.0, verify:
 - invalid-document behavior is defined
 - extension behavior is defined
 - at least one independent or clean-room implementation is feasible from the spec
+- independent implementers, including general-purpose AI systems unfamiliar with YomPUB, can create and interpret valid documents from the published specification alone without undocumented assumptions
 - real books have survived migration through the late `0.x` drafts
+
+See [`docs/SPEC_CLARITY.md`](docs/SPEC_CLARITY.md) for the specification-clarity principle and proposed AI ambiguity test.
 
 Only then publish:
 
