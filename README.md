@@ -59,7 +59,7 @@ YomPUB自体は本のデータを単純に保ち、**表示の仕事はビュー
 
 現在は、CommonMarkを基礎にした小さなMarkdownプロファイルを有力候補として検討しています。Markdown採用を含め、まだ仕様は確定していません。
 
-詳しい初期設計は [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md)、バージョニング方針は [`docs/VERSIONING.md`](docs/VERSIONING.md) にあります。
+次に進む作業は [`ROADMAP.md`](ROADMAP.md) に整理しています。詳しい初期設計は [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md)、バージョニング方針は [`docs/VERSIONING.md`](docs/VERSIONING.md) にあります。
 
 **Status: Pre-spec / Experimental**
 
@@ -116,7 +116,7 @@ YomPUB keeps the book data simple and **leaves rendering to the viewer.**
 
 A small CommonMark-based Markdown profile is currently the leading candidate, but even Markdown is not yet a final decision.
 
-See [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md) for the initial design notes and [`docs/VERSIONING.md`](docs/VERSIONING.md) for the versioning policy.
+See [`ROADMAP.md`](ROADMAP.md) for the next work, [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md) for the initial design notes, and [`docs/VERSIONING.md`](docs/VERSIONING.md) for the versioning policy.
 
 **Status: Pre-spec / Experimental**
 
