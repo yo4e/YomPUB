@@ -63,7 +63,7 @@ YomPUB自体は本のデータを単純に保ち、**表示の仕事はビュー
 
 **Status: Pre-spec / Experimental**
 
-名前の **Yom** は、日本語の「読む（yomu）」から来ています。
+名前の **Yom** は、日本語の「読む（yomu）」から。偶然にもヘブライ語の *yom* は「日」を意味します。**1DAYで出版できるくらい軽く。** それもYomPUBの思想です。
 
 ---
 
@@ -120,4 +120,4 @@ See [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md) for the initial design notes.
 
 **Status: Pre-spec / Experimental**
 
-The name **Yom** comes from the Japanese *yomu* (読む), “to read.”
+The name **Yom** comes from the Japanese *yomu* (読む), “to read.” By coincidence, Hebrew *yom* means “day” — a nice fit for the idea that publishing should be light enough to happen in a day.
