@@ -121,3 +121,11 @@ See [`ROADMAP.md`](ROADMAP.md) for the next work, [`docs/DESIGN_DRAFT.md`](docs/
 **Status: Pre-spec / Experimental**
 
 The name **Yom** comes from the Japanese *yomu* (読む), “to read.” By coincidence, Hebrew *yom* means “day” — a nice fit for the idea that publishing should be light enough to happen in a day.
+
+---
+
+## License / ライセンス
+
+YomPUB の仕様案、設計文書、およびこのリポジトリで今後公開されるコードは、個別に別条件が示されない限り [MIT License](LICENSE) で公開します。
+
+YomPUB specification drafts, design documents, and future code published in this repository are available under the [MIT License](LICENSE) unless a specific file states otherwise.
