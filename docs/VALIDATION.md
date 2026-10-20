@@ -57,6 +57,8 @@ npm run test:ui
 
 同じフォルダの再読込では、「本のフォルダを開く」から原稿を3版に書き換えて読み、各版のタイトル・原稿・画像・保存結果を確認する。変更のない同じフォルダについても本文DOMの入れ替えを確認し、前回の完了表示だけを見て成功としない。WebKitではこのシナリオを追加で5回繰り返し、失敗時のスクリーンショットとトレースをActionsのartifactに7日間残す。
 
+`npm run test:ui`は、固定したPlaywright 1.61.1のディレクトリ選択処理にテスト専用の補正を適用する（`scripts/prepare-browser-tests.mjs`）。元の処理は`input`監視の登録完了を待たずにネイティブ選択を開始するため、Ubuntu WebKitでイベントを取り逃がすことがある。保存トレースでは本が表示済みでも`setInputFiles`が30秒待機していた。補正は監視登録の完了を確認してから選択を実行する。タイムアウト延長・例外の握りつぶし・再試行・テスト省略は行わず、製品のparser/viewerには含めない。バージョンや対象コードが変わった場合は明示的に失敗するので、Playwright更新時に上流の修正を確認して削除または再評価する。2026-10-20時点の[公式v1.64.1実装](https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/src/server/dom.ts#L770)にも同じ登録順序が残っている。
+
 保存したスクリーンショットと`evidence/validation-summary.json`は上記macOSの初回記録であり、CIの毎回の結果へ自動で上書きコミットしない。CIが検証したコミットと実行結果はActionsで確認する。Ubuntu上のブラウザ検証が通っても、Linux全般の手動読書・フォント・支援技術の評価済みとは扱わない。
 
 ## 既知の制限

@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "test:ui": "npm run build && playwright test",
+    "test:ui": "npm run build && node scripts/prepare-browser-tests.mjs && playwright test",
     "validate": "node src/cli.mjs validate",
     "ast": "node src/cli.mjs ast"
   },
