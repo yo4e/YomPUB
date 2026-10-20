@@ -82,7 +82,9 @@ test('local folder load, same-file reload, source and AST downloads',async({page
       const title=`月の港 ${revision}`;
       source=original.replace('title: 月の港',`title: ${title}`);
       await writeFile(join(dir,'book.md'),source);
-      await page.locator('#folder').setInputFiles(dir);
+      const chooser=page.waitForEvent('filechooser');
+      await page.getByText('本のフォルダを開く',{exact:true}).click();
+      await (await chooser).setFiles(dir);
       // A distinct title prevents the previous load's status from satisfying this wait.
       await expect(page.locator('#status')).toContainText(`${title} を開きました`);
       await expect(page.locator('#book-title')).toHaveText(title);
@@ -90,6 +92,15 @@ test('local folder load, same-file reload, source and AST downloads',async({page
       await expect(page.locator('article img')).toHaveCount(2);
       await expect(page.locator('#error')).toBeHidden();
     }
+    // Also reopen an unchanged path: the newly rendered article must replace
+    // the previous node even though the title and source are identical.
+    const previousArticle=await page.locator('article').elementHandle();
+    const chooser=page.waitForEvent('filechooser');
+    await page.getByText('本のフォルダを開く',{exact:true}).click();
+    await (await chooser).setFiles(dir);
+    await expect.poll(()=>previousArticle.evaluate(node=>node.isConnected)).toBe(false);
+    await expect(page.locator('#status')).toContainText('月の港 2 を開きました');
+    await previousArticle.dispose();
     await page.locator('#source-panel summary').click();
     const sourceDownload=page.waitForEvent('download'); await page.locator('#download-source').click();
     const sourcePath=await (await sourceDownload).path();

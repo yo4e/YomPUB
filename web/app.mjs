@@ -76,8 +76,11 @@ for (const button of document.querySelectorAll('button[data-sample]')) {
 }
 for (const id of ['folder','manuscript']) {
   const input = /** @type {HTMLInputElement} */ (byId(id));
+  // Clear before choosing so the same path can be selected again, without
+  // mutating the selection while WebKit is still dispatching its file events.
+  input.addEventListener('click', () => { input.value = ''; });
   input.addEventListener('change', () => {
-    const files = [...(input.files ?? [])]; input.value = '';
+    const files = [...(input.files ?? [])];
     // webkitRelativePath is not preserved by File structured cloning in WebKit.
     if (files.length) load({ kind:'files', files:files.map(file => ({ file, path:file.webkitRelativePath ? file.webkitRelativePath.split('/').slice(1).join('/') : file.name })) });
   });
@@ -86,6 +89,7 @@ for (const id of ['folder','manuscript']) {
 byId('cancel').addEventListener('click', () => { stop(); status.textContent = '読み込みを中断しました。'; });
 byId('close-book').addEventListener('click', () => {
   stop(); if (current) revoke(current.urls); current = null;
+  for (const id of ['folder','manuscript']) /** @type {HTMLInputElement} */ (byId(id)).value = '';
   viewport.replaceChildren(); byId('toc').replaceChildren(); byId('source').textContent = ''; byId('warnings').textContent = '';
   reader.hidden = true; errorBox.hidden = true; status.textContent = '本を閉じました。次の本を選んでください。';
   /** @type {HTMLButtonElement|null} */ (document.querySelector('[data-sample]'))?.focus();
