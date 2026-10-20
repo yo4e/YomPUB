@@ -20,7 +20,7 @@
           <button type="button" data-sample="vertical"><span>02</span><strong>月の港</strong><small>日本語縦書き · ルビ · 明示表紙</small></button>
           <button type="button" data-sample="rtl"><span>03</span><strong lang="ar" dir="rtl">ضوء الميناء</strong><small>RTL · العربية · 混在テキスト</small></button>
         </div>
-        <div class="local-open"><label class="file-button">本のフォルダを開く<input id="folder" type="file" webkitdirectory multiple></label><label class="file-button secondary">book.mdのみ<input id="manuscript" type="file" accept=".md,text/markdown"></label></div>
+        <div class="local-open"><button type="button" class="file-button" data-open-input="folder">本のフォルダを開く</button><input id="folder" type="file" webkitdirectory multiple hidden><button type="button" class="file-button secondary" data-open-input="manuscript">book.mdのみ</button><input id="manuscript" type="file" accept=".md,text/markdown" hidden></div>
         <p class="hint">book.mdと画像のあるフォルダを選択。選んだファイルは、このブラウザ内だけで読みます。</p>
       </div>
     </section>

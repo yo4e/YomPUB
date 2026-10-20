@@ -74,18 +74,31 @@ function load(request) {
 for (const button of document.querySelectorAll('button[data-sample]')) {
   button.addEventListener('click', () => load({ kind:'sample', sample: /** @type {HTMLElement} */ (button).dataset.sample ?? '' }));
 }
-for (const id of ['folder','manuscript']) {
-  const input = /** @type {HTMLInputElement} */ (byId(id));
+/** @param {HTMLInputElement} input */
+function bindFileInput(input) {
   input.addEventListener('change', () => {
-    const files = [...(input.files ?? [])]; input.value = '';
+    const files = [...(input.files ?? [])];
     // webkitRelativePath is not preserved by File structured cloning in WebKit.
     if (files.length) load({ kind:'files', files:files.map(file => ({ file, path:file.webkitRelativePath ? file.webkitRelativePath.split('/').slice(1).join('/') : file.name })) });
   });
   input.addEventListener('cancel', () => { status.textContent = 'ファイル選択を中断しました。'; });
 }
+for (const id of ['folder','manuscript']) bindFileInput(/** @type {HTMLInputElement} */ (byId(id)));
+for (const button of document.querySelectorAll('button[data-open-input]')) {
+  button.addEventListener('click', () => {
+    const id = /** @type {HTMLElement} */ (button).dataset.openInput ?? '';
+    const previous = byId(id);
+    // A fresh control has no prior directory selection. Clearing value alone
+    // still leaves repeated-folder input events unreliable in Linux WebKit.
+    const input = document.createElement('input');
+    for (const attribute of previous.attributes) input.setAttribute(attribute.name, attribute.value);
+    previous.replaceWith(input); bindFileInput(input); input.click();
+  });
+}
 byId('cancel').addEventListener('click', () => { stop(); status.textContent = '読み込みを中断しました。'; });
 byId('close-book').addEventListener('click', () => {
   stop(); if (current) revoke(current.urls); current = null;
+  for (const id of ['folder','manuscript']) /** @type {HTMLInputElement} */ (byId(id)).value = '';
   viewport.replaceChildren(); byId('toc').replaceChildren(); byId('source').textContent = ''; byId('warnings').textContent = '';
   reader.hidden = true; errorBox.hidden = true; status.textContent = '本を閉じました。次の本を選んでください。';
   /** @type {HTMLButtonElement|null} */ (document.querySelector('[data-sample]'))?.focus();
