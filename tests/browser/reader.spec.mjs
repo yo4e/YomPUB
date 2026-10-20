@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { readFile, mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { readFile, mkdtemp, writeFile, mkdir, rm, cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 const header='---\nyompub: 0.1-draft.1\ntitle: Local test\nlang: en\n---\n# Start\n\n';
@@ -73,21 +73,35 @@ test('three books preserve semantics and real layout, navigation and typography'
 });
 
 test('local folder load, same-file reload, source and AST downloads',async({page})=>{
-  await page.locator('#folder').setInputFiles(resolve('samples/vertical'));
-  await expect(page.locator('#status')).toContainText('月の港 を開きました');
-  await expect(page.locator('article img')).toHaveCount(2);
-  await page.locator('#folder').setInputFiles(resolve('samples/vertical'));
-  await expect(page.locator('#status')).toContainText('月の港 を開きました');
-  await page.locator('#source-panel summary').click();
-  const sourceDownload=page.waitForEvent('download'); await page.locator('#download-source').click();
-  const sourcePath=await (await sourceDownload).path();
-  expect(await readFile(sourcePath,'utf8')).toBe(await readFile('samples/vertical/book.md','utf8'));
-  const astDownload=page.waitForEvent('download'); await page.locator('#download-ast').click();
-  const ast=JSON.parse(await readFile(await (await astDownload).path(),'utf8'));
-  expect(ast.metadata.writingMode).toBe('vertical-rl'); expect(ast.toc[0].label).toBe('第一章　港の灯り');
-  await page.locator('#close-book').click(); await expect(page.locator('#reader')).toBeHidden();
-  await expect(page.locator('#source')).toHaveText('');
-  await openSample(page,'rtl','ضوء الميناء');
+  const dir=await mkdtemp(join(tmpdir(),'yompub-reload-'));
+  try {
+    await cp(resolve('samples/vertical'),dir,{recursive:true});
+    const original=await readFile(join(dir,'book.md'),'utf8');
+    let source=original;
+    for(let revision=0;revision<3;revision++) {
+      const title=`月の港 ${revision}`;
+      source=original.replace('title: 月の港',`title: ${title}`);
+      await writeFile(join(dir,'book.md'),source);
+      await page.locator('#folder').setInputFiles(dir);
+      // A distinct title prevents the previous load's status from satisfying this wait.
+      await expect(page.locator('#status')).toContainText(`${title} を開きました`);
+      await expect(page.locator('#book-title')).toHaveText(title);
+      await expect(page.locator('#source')).toHaveText(source);
+      await expect(page.locator('article img')).toHaveCount(2);
+      await expect(page.locator('#error')).toBeHidden();
+    }
+    await page.locator('#source-panel summary').click();
+    const sourceDownload=page.waitForEvent('download'); await page.locator('#download-source').click();
+    const sourcePath=await (await sourceDownload).path();
+    expect(await readFile(sourcePath,'utf8')).toBe(source);
+    const astDownload=page.waitForEvent('download'); await page.locator('#download-ast').click();
+    const ast=JSON.parse(await readFile(await (await astDownload).path(),'utf8'));
+    expect(ast.metadata.title).toBe('月の港 2');
+    expect(ast.metadata.writingMode).toBe('vertical-rl'); expect(ast.toc[0].label).toBe('第一章　港の灯り');
+    await page.locator('#close-book').click(); await expect(page.locator('#reader')).toBeHidden();
+    await expect(page.locator('#source')).toHaveText('');
+    await openSample(page,'rtl','ضوء الميناء');
+  } finally { await rm(dir,{recursive:true,force:true}); }
 });
 
 test('invalid files preserve prior book and can recover',async({page})=>{

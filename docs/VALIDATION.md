@@ -55,6 +55,8 @@ npm run test:ui
 
 `.github/workflows/ci.yml`はPRとmainへのpushで、Node 22 / Ubuntu 24.04から`npm ci`、`npm run check`、三冊のCLI検証、Chromium/WebKitのインストール、`npm run test:ui`を実行する。CIはリポジトリ読取権限だけを持ち、デプロイ・リリース・生成物のコミットは行わない。
 
+同じフォルダの再読込では、原稿を3版に書き換え、各版のタイトル・原稿・画像・保存結果を確認する。前回の完了表示だけを見て成功としない。WebKitではこのシナリオを追加で5回繰り返し、失敗時のスクリーンショットとトレースをActionsのartifactに7日間残す。
+
 保存したスクリーンショットと`evidence/validation-summary.json`は上記macOSの初回記録であり、CIの毎回の結果へ自動で上書きコミットしない。CIが検証したコミットと実行結果はActionsで確認する。Ubuntu上のブラウザ検証が通っても、Linux全般の手動読書・フォント・支援技術の評価済みとは扱わない。
 
 ## 既知の制限
