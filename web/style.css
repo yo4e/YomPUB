@@ -142,19 +142,6 @@ main {
 .file-button {
   display:inline-block;
   font-size:.8rem;
-  position:relative;
-  overflow:hidden;
-}
-.file-button input {
-  position:absolute;
-  inset:0;
-  opacity:0;
-  cursor:pointer;
-  width:100%;
-}
-.file-button:focus-within {
-  outline:3px solid #be7a2e;
-  outline-offset:3px;
 }
 .secondary {
   background:transparent;
