@@ -8,18 +8,20 @@
 
 ## まず触る
 
-Node.js 22以上が必要です。リポジトリのフォルダで実行します。
+Node.js 22以上とGitが必要です。初回の依存インストールにはネット接続が必要です。
 
 ```sh
+git clone https://github.com/yo4e/YomPUB.git
+cd YomPUB
 npm ci
 npm run dev
 ```
 
 表示された **http://127.0.0.1:4178** をブラウザで開き、三冊から選んでください。終了はターミナルで `Ctrl+C`。4178番を使っている場合は `PORT=4180 npm run dev` で変更できます。
 
-- **The Small Harbour** — 横書き、章節、リンク、画像alt。表紙はありません。
-- **月の港** — 日本語縦書き、ルビ、明示表紙。本文は**左右にスクロール**します。
-- **ضوء الميناء** — アラビア語RTLの中に、英語・ヘブライ語・数字・URLを含む本。
+- **[The Small Harbour](samples/horizontal/book.md)** — 横書き、章節、リンク、画像alt。表紙はありません。
+- **[月の港](samples/vertical/book.md)** — 日本語縦書き、ルビ、明示表紙。本文は**左右にスクロール**します。
+- **[ضوء الميناء](samples/rtl/book.md)** — アラビア語RTLの中に、英語・ヘブライ語・数字・URLを含む本。
 
 目次から移動し、文字サイズを変えてみてください。「原稿と解析結果を確認」から素の原稿を読み、原稿または意味モデルのJSONを保存できます。保存したbook.mdだけでは画像は同梱されません。交換するときは本のフォルダ全体を渡します。
 
@@ -57,6 +59,40 @@ writing-mode: vertical-rl
 
 ヘッダはYAMLではなく、一行ずつの文字列です。必須は `yompub`、`title`、`lang`。画像はローカルのPNG/JPEG/WebP。通常の目次は見出しから生成します。ルビは `｜本文《読み》`、短い言語・方向範囲は `{{言語|ltr/rtl/auto|本文}}`。詳しい境界とエスケープは[規範案](docs/spec/0.1-draft.1.md)が正本です。
 
+## 現状と未検証の範囲
+
+| 動いているもの | まだ確認・実装していないもの |
+| --- | --- |
+| 三冊の素の原稿→意味モデル→ブラウザ表示 | 仕様だけから作った独立実装との相互運用 |
+| 日本語縦書き・ルビ、RTL/LTRの混在、構造からの目次 | 長い実在の本を通して読む評価、RTL母語話者の校閲 |
+| フォルダ読込、原稿/JSON保存、文字サイズ/配色、中断・失敗からの復帰 | 支援技術・実機iOS/Android・他の文字体系の組版品質 |
+| Nodeテスト95件（基底CommonMark公式652例の照合を含む）、ブラウザ24件の初回検証 | EPUB/PDF出力、ZIP、脚注・キャプション等の拡張 |
+
+Coreを固定した完成仕様ではありません。テスト成功は、全言語の出版品質や将来互換性を保証しません。[検証記録](docs/VALIDATION.md)で、実施環境と既知制限を確認できます。PRとmainには[同じ検証を行うCI](https://github.com/yo4e/YomPUB/actions/workflows/ci.yml)があります。チェック結果は対象コミットに対するものです。
+
+## parser・CLI・viewerの役割
+
+| 入口 | 役割 |
+| --- | --- |
+| `src/core.mjs`: `decodeSource(bytes)` → `parseBook(source)` | UTF-8/書式を検証し、`{ book, warnings }`を返す。ファイルアクセスはしない |
+| `src/local.mjs`: `loadLocalBook(path)` | parserに加え、画像の実在・範囲・署名を確認するNode用入口 |
+| `src/cli.mjs`: `validate` / `ast` | 上記の検証結果や意味モデルをターミナルへ出力 |
+| `src/render.mjs`: `renderBook(book, { document, resolveAsset })` | 検証済みASTを意味付きDOMへ変換するブラウザ用入口 |
+| `npm run dev` | ローカルviewer。画像を実際にデコードしてから本を切り替える |
+
+parserをコードから試す場合は、リポジトリ直下のES moduleで次のように使えます。npm配布パッケージではなく、このリポジトリ内の実験用APIです。
+
+```js
+import { readFile } from 'node:fs/promises';
+import { decodeSource, parseBook } from './src/core.mjs';
+
+const bytes = await readFile('samples/vertical/book.md');
+const { book, warnings } = parseBook(decodeSource(bytes));
+console.log(book.metadata, book.toc, warnings);
+```
+
+`parseBook`は不正入力を`YompubError`として拒否します。CLIの画像検証は署名までで、完全な画像デコードはviewerで確認してください。
+
 ## 検証・実装者向け
 
 ```sh
@@ -89,7 +125,9 @@ CLIは成功0、原稿/ファイルエラー1、使い方エラー2で終了し�
 
 YomPUB is a tiny, experimental source profile for ordinary reflowable books. A UTF-8 `book.md` plus local images stays readable in a plain text editor. The prototype includes a strict CommonMark-based parser, semantic JSON projection, CLI validator, and local browser reader with Japanese vertical text/ruby and isolated multilingual RTL/LTR runs.
 
-Run `npm ci && npm run dev`, then open http://127.0.0.1:4178. Choose a sample or open a folder containing `book.md`. Local files stay in your browser. `npm run check` runs static/unit checks; `npm run test:ui` runs headless Chromium and WebKit after `npx playwright install chromium webkit`.
+Clone this repository, enter `YomPUB`, then run `npm ci && npm run dev` and open http://127.0.0.1:4178. Choose a sample or open a folder containing `book.md`. Local files stay in your browser. `npm run check` runs static/unit checks; `npm run test:ui` runs headless Chromium and WebKit after `npx playwright install chromium webkit`.
+
+PR/main CI runs the static checks, sample validation and headless browser scenarios on Ubuntu. The initial recorded captures were made on macOS; see [validation scope and remaining work](docs/VALIDATION.md).
 
 The [draft specification](docs/spec/0.1-draft.1.md) is written in English for independent implementers. This is not a published compatibility promise or an EPUB/PDF exporter. Footnotes, captions, arbitrary HTML/CSS/JS, fixed layout, audio/video, ZIP packaging and an integrated authoring app are outside this slice.
 

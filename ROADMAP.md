@@ -8,18 +8,18 @@ YomPUB is being developed as a specification, not as a feature race. The roadmap
 
 ## Current checkpoint — 2026-10-20
 
-Phase 0 research and the post-Markua continuation gate ([#7](https://github.com/yo4e/YomPUB/issues/7)) are complete. [Issue #9](https://github.com/yo4e/YomPUB/issues/9) and [Phase 1 working direction](docs/PHASE1_WORKING_DIRECTION.md) remain the decision context. The local prototype now has:
+Phase 0 research and the post-Markua continuation gate ([#7](https://github.com/yo4e/YomPUB/issues/7)) are complete. [Issue #9](https://github.com/yo4e/YomPUB/issues/9) and [Phase 1 working direction](docs/PHASE1_WORKING_DIRECTION.md) remain the decision context. The prototype now has:
 
 - [Three source-first sample books](samples/README.md), covering horizontal, Japanese vertical/ruby and RTL mixed text.
 - [Sample-derived Core decisions](docs/CORE_DECISIONS.md) and a [normative v0 proposal](docs/spec/0.1-draft.1.md).
 - A parser, semantic AST, publication validator and local browser viewer.
 - [Automated checks, browser evidence and limits](docs/VALIDATION.md).
 
-This is progress through the Phase 1–3 prototype work, **not** a public release or a completed independent-implementation/1.0 gate. Nothing has been published by this local checkpoint. Issue #8's integrated authoring app remains deferred. The historical phases below describe the larger project sequence.
+This is progress through the Phase 1–3 prototype work, **not** a public release or a completed independent-implementation/1.0 gate. The implementation is retained in Git history and reviewed through a PR; this is not a tagged specification or software release. Issue #8's integrated authoring app remains deferred. The historical phases below describe the larger project sequence.
 
-## Phase 0 — Research / Prior Art
+## Phase 0 — Research / Prior Art (completed)
 
-Do not freeze syntax yet.
+The research below and the human continuation gate are complete. These historical questions explain the design inputs; they are not the next task.
 
 ### 0.1 Existing formats and prior art
 
@@ -100,7 +100,9 @@ Proceed only when we can explain:
 
 ---
 
-## Phase 1 — Define the Minimum
+## Phase 1 — Define the Minimum (prototype available; Issue #9 review)
+
+The three samples, decisions and draft exist. Review their coverage against Issue #9 before expanding scope.
 
 Use the research to define the smallest viable YomPUB document.
 
@@ -128,9 +130,9 @@ A person must be able to create a valid simple YomPUB book **by hand in a text e
 
 ---
 
-## Phase 2 — YomPUB Core 0.1 Draft
+## Phase 2 — YomPUB Core 0.1 Draft (proposal available)
 
-Publish the first testable specification draft.
+The testable `0.1.0-draft.1` proposal is in `docs/spec/0.1-draft.1.md`. Publication as a stable compatibility target is not implied.
 
 Create reference books covering at least:
 
@@ -150,9 +152,9 @@ See [`docs/VERSIONING.md`](docs/VERSIONING.md).
 
 ---
 
-## Phase 3 — Reference Web Viewer
+## Phase 3 — Reference Web Viewer (prototype available)
 
-Build a small open-source reference viewer.
+The small reference viewer can now be run with `npm run dev`. Its cross-browser checks run in CI; real-book, accessibility and independent-implementation evaluation remain open.
 
 Minimum goals:
 

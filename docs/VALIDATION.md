@@ -1,10 +1,10 @@
 # 試す手順と検証記録
 
-2026-10-20 / Core 0.1.0-draft.1 / local prototype
+2026-10-20 / Core 0.1.0-draft.1 / prototype validation
 
 ## すぐ試す
 
-リポジトリ直下で `npm ci` → `npm run dev`。表示された `http://127.0.0.1:4178` を開く。今回の作業場所は専用クローンの `YomPUB` フォルダで、ブランチは `codex/phase1-core-prototype`。公開・push・mergeは行っていない。
+リポジトリ直下で `npm ci` → `npm run dev`。表示された `http://127.0.0.1:4178` を開く。原稿と画像を持つフォルダをブラウザ内で読み込める。以下の初回検証記録はコミット`6b7c856`を作成した時点のもの。最新HEADの結果はGitHubのPRチェックと[Actions](https://github.com/yo4e/YomPUB/actions/workflows/ci.yml)を参照。
 
 1. **The Small Harbour**を選択。画像にaltがあり、表紙がないことを原稿と照合。目次の「The return」へ移動し、文字サイズを変える。
 2. **月の港**を選択。表紙を見たら目次で第一章へ移動。右側の列から下へ読み、左右にスクロール。`港`と`みなと`、`美良`と`みら`の対応を確認。
@@ -31,7 +31,7 @@
 | ローカル性 | 外部ネットワークをブロックした条件でフォルダを読込。観測要求はローカルアプリとBlobのみ、アップロードなし。localhostサーバーは起動したまま |
 | 長文解析の単発測定 | 756,091 bytes・12,001 blocks（12,000段落）をNodeで42ms。性能保証・全段落のブラウザ描画試験ではない |
 | npm audit | 実行依存の既知脆弱性0件（検証時点）。markdown-itは14.3.3固定 |
-| Git | 専用ブランチ。既存の作業場所・別プロジェクトは変更せず、ローカルコミットのみ |
+| Git（初回検証時） | 専用ブランチのローカルコミット`6b7c856`。後続のpush/PR/main取込はGitHub履歴で追跡 |
 
 環境: macOS arm64、Node 22.22.0、Playwright 1.61.1。モバイルは390×844のChromiumエミュレーションで、実機テストではない。WebKitはPlaywright配布版であり、インストール済みSafariそのものを操作した検証ではない。
 
@@ -51,6 +51,12 @@ npm run test:ui
 
 機械可読な概要は[evidence/validation-summary.json](../evidence/validation-summary.json)。スクリーンショットは[evidence/README.md](../evidence/README.md)。生のローカル実行ログは`evidence/check-output.txt`、`evidence/ui-output.txt`、`evidence/browser-results.json`（生成物としてGit対象外）。失敗時のPlaywright traceは`test-results/`。
 
+## CIでの再検証
+
+`.github/workflows/ci.yml`はPRとmainへのpushで、Node 22 / Ubuntu 24.04から`npm ci`、`npm run check`、三冊のCLI検証、Chromium/WebKitのインストール、`npm run test:ui`を実行する。CIはリポジトリ読取権限だけを持ち、デプロイ・リリース・生成物のコミットは行わない。
+
+保存したスクリーンショットと`evidence/validation-summary.json`は上記macOSの初回記録であり、CIの毎回の結果へ自動で上書きコミットしない。CIが検証したコミットと実行結果はActionsで確認する。Ubuntu上のブラウザ検証が通っても、Linux全般の手動読書・フォント・支援技術の評価済みとは扱わない。
+
 ## 既知の制限
 
 - 暫定書式。必須ヘッダ、Ruby/言語範囲、見出し規則、逐次IDを含め、将来変更できる。見出しを前に追加した場合は内部リンクIDの更新が必要。
@@ -68,7 +74,7 @@ npm run test:ui
 1. **独立実装/clean-room検証**: この仕様だけから別実装を作り、適合例・三冊の意味モデルを比較する。今回の同一実装＋回帰fixtureは代替にならない。
 2. **実際の長い本の読書**: 日本語小説と注を必要とする随筆で、原稿の書きやすさとCore不足を確認する。
 3. **母語話者によるRTL評価**: アラビア語/ヘブライ語の文・URL周囲の句読点を、人が読む観点から校閲する。
-4. **支援技術と実機**: VoiceOver等の読み上げ・キーボード読書の全体評価、実機iOS/Android、Firefox、Windows/Linuxは未実施。
+4. **支援技術と実機**: VoiceOver等の読み上げ・キーボード読書の全体評価、実機iOS/Android、Firefox、Windows、およびLinuxでの手動読書・支援技術評価は未実施。
 5. **他の文字体系**: Unicode保持の単体例はあるが、Indic/Thai/Mongolianの実表示・フォント適合・組版品質は未検証。
 
 これらを終える前に「1.0互換」「全言語で十分」「出版品質の組版」とは扱わない。今回の区切りは、仕様と意味モデルを読める形で、三冊を実際に開き、壊れる入力と中断を再現できる段階である。
