@@ -8,7 +8,17 @@ async function openSample(page,name,title) {
   await expect(page.locator('#status')).toContainText(`${title} を開きました`);
   await expect(page.locator('#error')).toBeHidden();
 }
-test.beforeEach(async({page})=>{ await page.goto('/'); });
+test.beforeAll(async({request,baseURL})=>{
+  if (process.env.YOMPUB_EXPECT_COMMIT) {
+    // Pages deployment completion and CDN availability can be a few seconds apart.
+    test.setTimeout(90000);
+    await expect.poll(async()=>{
+      const response=await request.get(new URL(`build-info.json?commit=${process.env.YOMPUB_EXPECT_COMMIT}`,baseURL).href);
+      return response.ok() ? response.json() : {status:response.status()};
+    },{timeout:60000,intervals:[1000,2000,5000]}).toEqual({format:'0.1-draft.1',commit:process.env.YOMPUB_EXPECT_COMMIT});
+  }
+});
+test.beforeEach(async({page})=>{ const response=await page.goto('./'); expect(response.ok()).toBe(true); });
 
 test('three books preserve semantics and real layout, navigation and typography',async({page},info)=>{
   const errors=[]; page.on('pageerror',e=>errors.push(e.message));
@@ -169,15 +179,17 @@ test('a signature-valid but undecodable image fails transactionally',async({page
   } finally {await rm(dir,{recursive:true,force:true});}
 });
 
-test('local files load with external network blocked and no uploads',async({page})=>{
+test('local files load with external network blocked and no uploads',async({page,baseURL})=>{
+  const allowed=new URL(baseURL), blobPrefix=`blob:${allowed.origin}/`;
+  const isLocal=url=>url.startsWith(allowed.href)||url.startsWith(blobPrefix);
   const requests=[]; page.on('request',r=>requests.push({url:r.url(),method:r.method()}));
   await page.context().route('**/*',route=>{
     const url=route.request().url();
-    return (url.startsWith('http://127.0.0.1:4178/') || url.startsWith('blob:http://127.0.0.1:4178/')) ? route.continue() : route.abort();
+    return isLocal(url) ? route.continue() : route.abort();
   });
   await page.locator('#folder').setInputFiles(resolve('samples/rtl'));
   await expect(page.locator('#status')).toContainText('ضوء الميناء を開きました');
-  expect(requests.filter(r=>r.method!=='GET'||!(r.url.startsWith('http://127.0.0.1:4178/') || r.url.startsWith('blob:http://127.0.0.1:4178/')))).toEqual([]);
+  expect(requests.filter(r=>r.method!=='GET'||!isLocal(r.url))).toEqual([]);
 });
 
 test('cancel a running worker during a long manuscript parse, then reopen',async({page})=>{
