@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-20",
+  "format": "0.1-draft.1",
+  "baseCommit": "da2782aa9c584b36e2a2eba955821e0e858db4b6",
+  "branch": "codex/phase1-core-prototype",
+  "node": "v22.22.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "staticChecks": [
+    "eslint",
+    "tsc --noEmit (strict checkJs)",
+    "esbuild"
+  ],
+  "nodeTests": {
+    "passed": 95,
+    "failed": 0,
+    "includesCommonMarkExamples": 652
+  },
+  "browserTests": {
+    "passed": 24,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "projects": [
+      "chromium-desktop",
+      "chromium-mobile",
+      "webkit-desktop"
+    ]
+  },
+  "longBook": {
+    "bytes": 756091,
+    "blocks": 12001,
+    "parseMilliseconds": 42
+  },
+  "limitations": "See docs/VALIDATION.md; no independent implementation, native-speaker or screen-reader certification."
+}

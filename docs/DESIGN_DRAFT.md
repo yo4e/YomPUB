@@ -1,6 +1,8 @@
 # YomPUB — Initial Design Draft
 
-Status: **Pre-spec / Experimental**
+Status: **Historical initial design / Experimental**
+
+For the current local prototype, see [0.1-draft.1](spec/0.1-draft.1.md) and [sample-derived decisions](CORE_DECISIONS.md). This document records earlier possibilities; its optional fields, mode vocabulary and undecided syntax are not the prototype's normative contract.
 
 This document records the first design direction for YomPUB. It is intentionally incomplete. The goal at this stage is to protect the project's simplicity before implementation pressure starts adding features.
 

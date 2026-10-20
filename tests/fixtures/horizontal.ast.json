@@ -1,0 +1,292 @@
+{
+  "format": "0.1-draft.1",
+  "metadata": {
+    "title": "The Small Harbour",
+    "author": "YomPUB contributors",
+    "lang": "en",
+    "direction": "ltr",
+    "writingMode": "horizontal-tb",
+    "cover": null
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-1",
+      "children": [
+        {
+          "type": "text",
+          "value": "A place to begin"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "Mira reached the harbour before sunrise. The little lamp was still lit."
+        },
+        {
+          "type": "softBreak"
+        },
+        {
+          "type": "text",
+          "value": "She left a note: "
+        },
+        {
+          "type": "emphasis",
+          "children": [
+            {
+              "type": "text",
+              "value": "please keep it burning"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "image",
+          "src": "assets/harbour.png",
+          "alt": "A gold lamp beside three blue waves",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "The first image is a figure. This book has "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "no cover"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "h-2",
+      "children": [
+        {
+          "type": "text",
+          "value": "A note for the next traveller"
+        }
+      ]
+    },
+    {
+      "type": "blockquote",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "value": "A light can be small and still be useful."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": true,
+      "start": 1,
+      "tight": true,
+      "children": [
+        {
+          "type": "item",
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Read the sign."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Follow the shore."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Leave the lamp for someone else."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "The sign said "
+        },
+        {
+          "type": "span",
+          "lang": "fr",
+          "direction": "ltr",
+          "value": "Bienvenue"
+        },
+        {
+          "type": "text",
+          "value": ". The map is described in"
+        },
+        {
+          "type": "softBreak"
+        },
+        {
+          "type": "link",
+          "href": "#h-3",
+          "title": "",
+          "children": [
+            {
+              "type": "text",
+              "value": "the next chapter"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": ". For background, visit the"
+        },
+        {
+          "type": "softBreak"
+        },
+        {
+          "type": "link",
+          "href": "https://spec.commonmark.org/0.31.2/",
+          "title": "",
+          "children": [
+            {
+              "type": "text",
+              "value": "CommonMark specification"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-3",
+      "children": [
+        {
+          "type": "text",
+          "value": "The return"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "On the way home, Mira wrote "
+        },
+        {
+          "type": "code",
+          "value": "lamp = on"
+        },
+        {
+          "type": "text",
+          "value": " in her notebook."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "A preserved line break follows:"
+        },
+        {
+          "type": "hardBreak"
+        },
+        {
+          "type": "text",
+          "value": "The lamp is still here."
+        }
+      ]
+    },
+    {
+      "type": "thematicBreak"
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "The end is a place to begin again."
+        }
+      ]
+    }
+  ],
+  "toc": [
+    {
+      "id": "h-1",
+      "level": 1,
+      "label": "A place to begin"
+    },
+    {
+      "id": "h-2",
+      "level": 2,
+      "label": "A note for the next traveller"
+    },
+    {
+      "id": "h-3",
+      "level": 1,
+      "label": "The return"
+    }
+  ],
+  "assets": [
+    "assets/harbour.png"
+  ]
+}

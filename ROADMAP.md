@@ -1,10 +1,21 @@
 # YomPUB Roadmap
 
-Status: **Pre-spec / Experimental**
+Status: **Core 0.1.0-draft.1 prototype / Experimental**
 
 YomPUB is being developed as a specification, not as a feature race. The roadmap is therefore **gate-based rather than date-based**: each phase should answer a set of questions before the next phase begins.
 
-> **NEXT: Research existing publication formats, EPUB internals, and global writing systems before defining YomPUB syntax.**
+> **NEXT: independently implement the draft from its specification and fixtures; test longer real manuscripts and native-reader RTL/accessibility behavior before expanding Core.**
+
+## Current checkpoint — 2026-10-20
+
+Phase 0 research and the post-Markua continuation gate ([#7](https://github.com/yo4e/YomPUB/issues/7)) are complete. [Issue #9](https://github.com/yo4e/YomPUB/issues/9) and [Phase 1 working direction](docs/PHASE1_WORKING_DIRECTION.md) remain the decision context. The local prototype now has:
+
+- [Three source-first sample books](samples/README.md), covering horizontal, Japanese vertical/ruby and RTL mixed text.
+- [Sample-derived Core decisions](docs/CORE_DECISIONS.md) and a [normative v0 proposal](docs/spec/0.1-draft.1.md).
+- A parser, semantic AST, publication validator and local browser viewer.
+- [Automated checks, browser evidence and limits](docs/VALIDATION.md).
+
+This is progress through the Phase 1–3 prototype work, **not** a public release or a completed independent-implementation/1.0 gate. Nothing has been published by this local checkpoint. Issue #8's integrated authoring app remains deferred. The historical phases below describe the larger project sequence.
 
 ## Phase 0 — Research / Prior Art
 

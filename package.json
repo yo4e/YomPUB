@@ -1,0 +1,33 @@
+{
+  "name": "yompub-prototype",
+  "version": "0.1.0-draft.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "test:ui": "npm run build && playwright test",
+    "validate": "node src/cli.mjs validate",
+    "ast": "node src/cli.mjs ast"
+  },
+  "dependencies": {
+    "markdown-it": "14.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "@playwright/test": "1.61.1",
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "22.19.1",
+    "esbuild": "0.27.0",
+    "eslint": "9.39.1",
+    "globals": "16.5.0",
+    "typescript": "5.9.3"
+  }
+}

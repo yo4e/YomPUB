@@ -1,0 +1,255 @@
+{
+  "format": "0.1-draft.1",
+  "metadata": {
+    "title": "月の港",
+    "author": "YomPUB contributors",
+    "lang": "ja",
+    "direction": "ltr",
+    "writingMode": "vertical-rl",
+    "cover": {
+      "src": "assets/cover.png",
+      "alt": "紺色の空に金色の月と白い港"
+    }
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-1",
+      "children": [
+        {
+          "type": "text",
+          "value": "第一章　"
+        },
+        {
+          "type": "ruby",
+          "base": "港",
+          "annotation": "みなと"
+        },
+        {
+          "type": "text",
+          "value": "の灯り"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "「まだ、灯りがある。」"
+        },
+        {
+          "type": "ruby",
+          "base": "美良",
+          "annotation": "みら"
+        },
+        {
+          "type": "text",
+          "value": "は桟橋で立ち止まった。海の向こうには、"
+        },
+        {
+          "type": "ruby",
+          "base": "月影",
+          "annotation": "つきかげ"
+        },
+        {
+          "type": "text",
+          "value": "が細く伸びていた。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "午後７時。時計の数字は 2026 と変わっても、ここでは急ぐ人が少ない。案内板には "
+        },
+        {
+          "type": "span",
+          "lang": "en",
+          "direction": "ltr",
+          "value": "MOON PORT"
+        },
+        {
+          "type": "text",
+          "value": " と書かれている。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "image",
+          "src": "assets/harbour.png",
+          "alt": "月の下で、灯りが三本の波を照らしている",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "h-2",
+      "children": [
+        {
+          "type": "text",
+          "value": "小さな約束"
+        }
+      ]
+    },
+    {
+      "type": "blockquote",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "ruby",
+              "base": "明日",
+              "annotation": "あした"
+            },
+            {
+              "type": "text",
+              "value": "も、この場所で。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "一つの"
+        },
+        {
+          "type": "ruby",
+          "base": "人工知能",
+          "annotation": "じんこうちのう"
+        },
+        {
+          "type": "text",
+          "value": "より、隣の人の声が頼りになる夜もある。強く伝えたいのは、"
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "灯りを消さないこと"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "だけだった。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "href": "#h-3",
+          "title": "",
+          "children": [
+            {
+              "type": "text",
+              "value": "第二章へ"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "。この本の表紙はヘッダで明示し、本文の挿絵とは別にしてある。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-3",
+      "children": [
+        {
+          "type": "text",
+          "value": "第二章　帰り道"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "ruby",
+          "base": "空",
+          "annotation": "そら"
+        },
+        {
+          "type": "text",
+          "value": "には月。"
+        },
+        {
+          "type": "ruby",
+          "base": "海",
+          "annotation": "うみ"
+        },
+        {
+          "type": "text",
+          "value": "には道。二つのルビはそれぞれの語に結びつき、読み順は原稿のまま残る。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "「Ａ、Ｂ、Ｃ……。」美良は数え直した。句読点、括弧、長音符――。組み方は表示する側に任せる。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "文字として記号を書くときは ｜例《れい》。"
+        },
+        {
+          "type": "code",
+          "value": "｜例《れい》"
+        },
+        {
+          "type": "text",
+          "value": " は記法の説明で、ルビにはしない。"
+        }
+      ]
+    }
+  ],
+  "toc": [
+    {
+      "id": "h-1",
+      "level": 1,
+      "label": "第一章　港の灯り"
+    },
+    {
+      "id": "h-2",
+      "level": 2,
+      "label": "小さな約束"
+    },
+    {
+      "id": "h-3",
+      "level": 1,
+      "label": "第二章　帰り道"
+    }
+  ],
+  "assets": [
+    "assets/cover.png",
+    "assets/harbour.png"
+  ]
+}

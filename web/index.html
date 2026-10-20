@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>YomPUB — 小さな本をひらく</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <header class="masthead"><a class="wordmark" href="./">YomPUB<span>よむパブ</span></a><p>小さな原稿から、本をひらく。</p><span class="draft">Core 0.1 · draft 1</span></header>
+  <main>
+    <section class="welcome" aria-labelledby="welcome-title">
+      <div><p class="eyebrow">READABLE WITHOUT A READER</p><h1 id="welcome-title">原稿のままでも、<br>読む場所を変えても。</h1><p>横書き、縦書き、右から左へ。<br>まずは三冊の短い本で、YomPUBを試してください。</p></div>
+      <div class="open-book">
+        <p class="eyebrow">SAMPLE BOOKS</p>
+        <div class="samples">
+          <button type="button" data-sample="horizontal"><span>01</span><strong>The Small Harbour</strong><small>横書き · English · 表紙なし</small></button>
+          <button type="button" data-sample="vertical"><span>02</span><strong>月の港</strong><small>日本語縦書き · ルビ · 明示表紙</small></button>
+          <button type="button" data-sample="rtl"><span>03</span><strong lang="ar" dir="rtl">ضوء الميناء</strong><small>RTL · العربية · 混在テキスト</small></button>
+        </div>
+        <div class="local-open"><label class="file-button">本のフォルダを開く<input id="folder" type="file" webkitdirectory multiple></label><label class="file-button secondary">book.mdのみ<input id="manuscript" type="file" accept=".md,text/markdown"></label></div>
+        <p class="hint">book.mdと画像のあるフォルダを選択。選んだファイルは、このブラウザ内だけで読みます。</p>
+      </div>
+    </section>
+    <div class="load-state"><p id="status" role="status" aria-live="polite">サンプルを選ぶか、自分の本を開いてください。</p><button id="cancel" type="button" hidden>読み込みを中断</button></div>
+    <p id="error" role="alert" hidden></p>
+    <section id="reader" hidden aria-label="本のビューア">
+      <div class="reader-top"><div><p class="eyebrow" id="mode-label"></p><h2 id="book-title"></h2><p id="book-author"></p></div><div class="controls"><label>文字サイズ <input id="font-size" type="range" min="16" max="32" value="20"><output id="font-value">20</output></label><label>配色 <select id="theme"><option value="paper">紙</option><option value="night">夜</option></select></label><button id="close-book" type="button">本を閉じる</button></div></div>
+      <div class="reading-layout"><nav id="toc" aria-label="目次"></nav><div id="viewport" tabindex="0" role="region" aria-label="本文。縦書きでは左右にスクロールできます。"></div></div>
+      <details id="source-panel"><summary>原稿と解析結果を確認</summary><p class="hint">これは試読用ビューアです。編集はテキストエディタで行い、保存したフォルダを開き直してください。</p><div class="source-actions"><button id="download-source" type="button">原稿を保存</button><button id="download-ast" type="button">意味モデル（JSON）を保存</button></div><pre id="source" tabindex="0" dir="auto"></pre><pre id="warnings"></pre></details>
+    </section>
+  </main>
+  <footer><span>人が書ける。意味を持ち運べる。</span><span>実験的な仕様案 · 互換性の約束はまだありません</span></footer>
+</body>
+</html>

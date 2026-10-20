@@ -1,0 +1,257 @@
+{
+  "format": "0.1-draft.1",
+  "metadata": {
+    "title": "ضوء الميناء",
+    "author": "YomPUB contributors",
+    "lang": "ar",
+    "direction": "rtl",
+    "writingMode": "horizontal-tb",
+    "cover": null
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-1",
+      "children": [
+        {
+          "type": "text",
+          "value": "عند الميناء"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "وصلت ميرا إلى الميناء قبل الغروب. كان الضوء صغيرًا، لكن الطريق واضحًا."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "اسم الكتاب هو "
+        },
+        {
+          "type": "span",
+          "lang": "en",
+          "direction": "ltr",
+          "value": "The Small Harbour (2026)"
+        },
+        {
+          "type": "text",
+          "value": "، ورقم الغرفة "
+        },
+        {
+          "type": "span",
+          "lang": "en",
+          "direction": "ltr",
+          "value": "A-12"
+        },
+        {
+          "type": "text",
+          "value": "."
+        },
+        {
+          "type": "softBreak"
+        },
+        {
+          "type": "text",
+          "value": "هذه الأجزاء تُقرأ من اليسار إلى اليمين داخل الفقرة العربية."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "image",
+          "src": "assets/harbour.png",
+          "alt": "مصباح ذهبي فوق ثلاث موجات زرقاء",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "h-2",
+      "children": [
+        {
+          "type": "text",
+          "value": "كلمات على اللافتة"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "كُتبت على اللافتة كلمة "
+        },
+        {
+          "type": "span",
+          "lang": "he",
+          "direction": "rtl",
+          "value": "שלום"
+        },
+        {
+          "type": "text",
+          "value": " وكلمة "
+        },
+        {
+          "type": "span",
+          "lang": "fr",
+          "direction": "ltr",
+          "value": "Bienvenue"
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "الرابط هو "
+        },
+        {
+          "type": "link",
+          "href": "https://example.org/a?x=1&y=2",
+          "title": "",
+          "children": [
+            {
+              "type": "span",
+              "lang": "en",
+              "direction": "ltr",
+              "value": "https://example.org/a?x=1&y=2"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "، ثم تستمر الجملة هنا."
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "start": 1,
+      "tight": true,
+      "children": [
+        {
+          "type": "item",
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "حافظ على الضوء."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "اتبع الشاطئ."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "href": "#h-3",
+          "title": "",
+          "children": [
+            {
+              "type": "text",
+              "value": "الفصل التالي"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "id": "h-3",
+      "children": [
+        {
+          "type": "text",
+          "value": "طريق العودة"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "بقي ترتيب الحروف كما كُتب. الأرقام ١٢٣ و123 لا تحتاج إلى عكس يدوي."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "علامة تجريبية من مصدر مجهول: "
+        },
+        {
+          "type": "span",
+          "lang": "und",
+          "direction": "auto",
+          "value": "YomPUB — 42"
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ]
+    }
+  ],
+  "toc": [
+    {
+      "id": "h-1",
+      "level": 1,
+      "label": "عند الميناء"
+    },
+    {
+      "id": "h-2",
+      "level": 2,
+      "label": "كلمات على اللافتة"
+    },
+    {
+      "id": "h-3",
+      "level": 1,
+      "label": "طريق العودة"
+    }
+  ],
+  "assets": [
+    "assets/harbour.png"
+  ]
+}

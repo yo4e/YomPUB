@@ -1,0 +1,9 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+/evidence/browser-results.json
+/evidence/check-output.txt
+/evidence/ui-output.txt

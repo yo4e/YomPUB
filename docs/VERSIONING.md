@@ -1,6 +1,8 @@
 # YomPUB Versioning Policy
 
-Status: **Pre-spec / Experimental**
+Status: **Experimental / draft identifier clarification**
+
+For the local normative proposal `0.1.0-draft.1`, manuscripts use the exact identifier `yompub: 0.1-draft.1`. Draft processors reject other draft identifiers rather than silently sharing `0.1` across breaking draft changes. Published versions will use the MAJOR.MINOR convention below. No 0.1.0 release has been made.
 
 YomPUB treats versioning as part of the format contract, not as project decoration.
 
