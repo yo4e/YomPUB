@@ -1,0 +1,526 @@
+[
+  {
+    "name": "ordinary text",
+    "body": "Hello, 世界.",
+    "inline": [
+      {
+        "type": "text",
+        "value": "Hello, 世界."
+      }
+    ]
+  },
+  {
+    "name": "logical multilingual Unicode preserved",
+    "body": "é が 👨‍👩‍👧‍👦 العربية हि‍न्दी ไทย",
+    "inline": [
+      {
+        "type": "text",
+        "value": "é が 👨‍👩‍👧‍👦 العربية हि‍न्दी ไทย"
+      }
+    ]
+  },
+  {
+    "name": "ruby in middle of prose",
+    "body": "空は｜青空《あおぞら》。",
+    "inline": [
+      {
+        "type": "text",
+        "value": "空は"
+      },
+      {
+        "type": "ruby",
+        "base": "青空",
+        "annotation": "あおぞら"
+      },
+      {
+        "type": "text",
+        "value": "。"
+      }
+    ]
+  },
+  {
+    "name": "adjacent group ruby",
+    "body": "｜海《うみ》｜風《かぜ》",
+    "inline": [
+      {
+        "type": "ruby",
+        "base": "海",
+        "annotation": "うみ"
+      },
+      {
+        "type": "ruby",
+        "base": "風",
+        "annotation": "かぜ"
+      }
+    ]
+  },
+  {
+    "name": "escaped ruby opener stays literal",
+    "body": "\\｜海《うみ》",
+    "inline": [
+      {
+        "type": "text",
+        "value": "｜海《うみ》"
+      }
+    ]
+  },
+  {
+    "name": "entity ruby opener stays literal",
+    "body": "&#xff5c;海《うみ》",
+    "inline": [
+      {
+        "type": "text",
+        "value": "｜海《うみ》"
+      }
+    ]
+  },
+  {
+    "name": "ruby field escapes",
+    "body": "｜a\\《b《c\\》d》",
+    "inline": [
+      {
+        "type": "ruby",
+        "base": "a《b",
+        "annotation": "c》d"
+      }
+    ]
+  },
+  {
+    "name": "ruby fields decode entities once",
+    "body": "｜A&amp;B《A&#124;B》",
+    "inline": [
+      {
+        "type": "ruby",
+        "base": "A&B",
+        "annotation": "A|B"
+      }
+    ]
+  },
+  {
+    "name": "escaped ampersand is not redecoded",
+    "body": "｜\\&amp;《&amp;amp;》",
+    "inline": [
+      {
+        "type": "ruby",
+        "base": "&amp;",
+        "annotation": "&amp;"
+      }
+    ]
+  },
+  {
+    "name": "ruby fields are atomic",
+    "body": "｜*海*《[うみ]》",
+    "inline": [
+      {
+        "type": "ruby",
+        "base": "*海*",
+        "annotation": "[うみ]"
+      }
+    ]
+  },
+  {
+    "name": "ruby surrounded by emphasis",
+    "body": "*｜海《うみ》*",
+    "inline": [
+      {
+        "type": "emphasis",
+        "children": [
+          {
+            "type": "ruby",
+            "base": "海",
+            "annotation": "うみ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ruby notation in code is code",
+    "body": "`｜海《うみ》`",
+    "inline": [
+      {
+        "type": "code",
+        "value": "｜海《うみ》"
+      }
+    ]
+  },
+  {
+    "name": "fixed isolated run",
+    "body": "اسم {{en|ltr|A-12 (2026)}}، هنا.",
+    "inline": [
+      {
+        "type": "text",
+        "value": "اسم "
+      },
+      {
+        "type": "span",
+        "lang": "en",
+        "direction": "ltr",
+        "value": "A-12 (2026)"
+      },
+      {
+        "type": "text",
+        "value": "، هنا."
+      }
+    ]
+  },
+  {
+    "name": "RTL and auto runs",
+    "body": "{{he|rtl|שלום}} {{und|auto|42}}",
+    "inline": [
+      {
+        "type": "span",
+        "lang": "he",
+        "direction": "rtl",
+        "value": "שלום"
+      },
+      {
+        "type": "text",
+        "value": " "
+      },
+      {
+        "type": "span",
+        "lang": "und",
+        "direction": "auto",
+        "value": "42"
+      }
+    ]
+  },
+  {
+    "name": "run escapes and entities",
+    "body": "{{en|ltr|a\\|b\\}\\} &amp;}}",
+    "inline": [
+      {
+        "type": "span",
+        "lang": "en",
+        "direction": "ltr",
+        "value": "a|b}} &"
+      }
+    ]
+  },
+  {
+    "name": "run fields are atomic",
+    "body": "{{ja|ltr|｜海《うみ》 *x*}}",
+    "inline": [
+      {
+        "type": "span",
+        "lang": "ja",
+        "direction": "ltr",
+        "value": "｜海《うみ》 *x*"
+      }
+    ]
+  },
+  {
+    "name": "escaped run opener",
+    "body": "\\{{en|ltr|x}}",
+    "inline": [
+      {
+        "type": "text",
+        "value": "{{en|ltr|x}}"
+      }
+    ]
+  },
+  {
+    "name": "entity run opener",
+    "body": "&#123;{en|ltr|x}}",
+    "inline": [
+      {
+        "type": "text",
+        "value": "{{en|ltr|x}}"
+      }
+    ]
+  },
+  {
+    "name": "run in link label",
+    "body": "[{{en|ltr|A}}](https://example.org/)",
+    "inline": [
+      {
+        "type": "link",
+        "href": "https://example.org/",
+        "title": "",
+        "children": [
+          {
+            "type": "span",
+            "lang": "en",
+            "direction": "ltr",
+            "value": "A"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "extension marker in destination stays destination",
+    "body": "[x](https://example.org/｜海《うみ》)",
+    "inline": [
+      {
+        "type": "link",
+        "href": "https://example.org/｜海《うみ》",
+        "title": "",
+        "children": [
+          {
+            "type": "text",
+            "value": "x"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "link title is literal",
+    "body": "[x](https://example.org/ \"{{oops}}\")",
+    "inline": [
+      {
+        "type": "link",
+        "href": "https://example.org/",
+        "title": "{{oops}}",
+        "children": [
+          {
+            "type": "text",
+            "value": "x"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "soft and hard breaks distinct",
+    "body": "a\nb  \nc\\\nd",
+    "inline": [
+      {
+        "type": "text",
+        "value": "a"
+      },
+      {
+        "type": "softBreak"
+      },
+      {
+        "type": "text",
+        "value": "b"
+      },
+      {
+        "type": "hardBreak"
+      },
+      {
+        "type": "text",
+        "value": "c"
+      },
+      {
+        "type": "hardBreak"
+      },
+      {
+        "type": "text",
+        "value": "d"
+      }
+    ]
+  },
+  {
+    "name": "image alt flattens supported markup",
+    "body": "![*a* `b`](assets/a.png \"A\")",
+    "inline": [
+      {
+        "type": "image",
+        "src": "assets/a.png",
+        "alt": "a b",
+        "title": "A"
+      }
+    ]
+  },
+  {
+    "name": "decorative image alt",
+    "body": "![](assets/a.png)",
+    "inline": [
+      {
+        "type": "image",
+        "src": "assets/a.png",
+        "alt": "",
+        "title": ""
+      }
+    ]
+  },
+  {
+    "name": "bare URL not auto-linked",
+    "body": "https://example.org/",
+    "inline": [
+      {
+        "type": "text",
+        "value": "https://example.org/"
+      }
+    ]
+  },
+  {
+    "name": "unsupported strikethrough is ordinary text",
+    "body": "~~word~~",
+    "inline": [
+      {
+        "type": "text",
+        "value": "~~word~~"
+      }
+    ]
+  },
+  {
+    "name": "escaped HTML is text",
+    "body": "&lt;script&gt;x&lt;/script&gt;",
+    "inline": [
+      {
+        "type": "text",
+        "value": "<script>x</script>"
+      }
+    ]
+  },
+  {
+    "name": "ruby missing delimiters",
+    "body": "｜海",
+    "error": "RUBY"
+  },
+  {
+    "name": "ruby empty base",
+    "body": "｜《うみ》",
+    "error": "RUBY"
+  },
+  {
+    "name": "ruby empty reading",
+    "body": "｜海《》",
+    "error": "RUBY"
+  },
+  {
+    "name": "ruby may not cross line",
+    "body": "｜海《う\nみ》",
+    "error": "RUBY"
+  },
+  {
+    "name": "nested ruby fails",
+    "body": "｜海《｜う《み》》",
+    "error": "RUBY"
+  },
+  {
+    "name": "decoded newline in ruby fails",
+    "body": "｜海《&#10;うみ》",
+    "error": "RUBY"
+  },
+  {
+    "name": "run bad language",
+    "body": "{{en_US|ltr|x}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "run bad direction",
+    "body": "{{en|sideways|x}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "run missing end",
+    "body": "{{en|ltr|x",
+    "error": "SPAN"
+  },
+  {
+    "name": "run nested braces fail",
+    "body": "{{en|ltr|{{fr|ltr|x}}}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "run stray bar fails",
+    "body": "{{en|ltr|a|b}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "run may not cross line",
+    "body": "{{en|ltr|a\nb}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "decoded newline in run fails",
+    "body": "{{en|ltr|a&#10;b}}",
+    "error": "SPAN"
+  },
+  {
+    "name": "raw inline HTML fails",
+    "body": "hello <b>world</b>",
+    "error": "HTML"
+  },
+  {
+    "name": "raw block HTML fails",
+    "body": "<script>alert(1)</script>",
+    "error": "HTML"
+  },
+  {
+    "name": "unsafe scheme fails explicitly",
+    "body": "[x](javascript:alert%281%29)",
+    "error": "LINK"
+  },
+  {
+    "name": "entity-obfuscated unsafe scheme",
+    "body": "[x](jav&#x61;script:evil)",
+    "error": "LINK"
+  },
+  {
+    "name": "data image fails",
+    "body": "![x](data:image/png;base64,AAAA)",
+    "error": "ASSET_PATH"
+  },
+  {
+    "name": "remote image fails",
+    "body": "![x](https://example.org/a.png)",
+    "error": "ASSET_PATH"
+  },
+  {
+    "name": "parent traversal fails",
+    "body": "![x](../a.png)",
+    "error": "ASSET_PATH"
+  },
+  {
+    "name": "encoded traversal fails",
+    "body": "![x](assets/%2e%2e/a.png)",
+    "error": "ASSET_PATH"
+  },
+  {
+    "name": "root image path fails",
+    "body": "![x](/a.png)",
+    "error": "ASSET_PATH"
+  },
+  {
+    "name": "missing internal target fails",
+    "body": "[x](#h-99)",
+    "error": "LINK_TARGET"
+  },
+  {
+    "name": "noncanonical internal target fails",
+    "body": "[x](#h-01)",
+    "error": "LINK"
+  },
+  {
+    "name": "custom anchor not recognized",
+    "body": "[x](#my-chapter)",
+    "error": "LINK"
+  },
+  {
+    "name": "ruby in alt fails",
+    "body": "![｜海《うみ》](assets/a.png)",
+    "error": "ALT"
+  },
+  {
+    "name": "deep ruby in alt fails",
+    "body": "![*｜海《うみ》*](assets/a.png)",
+    "error": "ALT"
+  },
+  {
+    "name": "run in alt fails",
+    "body": "![{{en|ltr|sea}}](assets/a.png)",
+    "error": "ALT"
+  },
+  {
+    "name": "jumping heading levels fails",
+    "body": "### Jump",
+    "error": "HEADING"
+  },
+  {
+    "name": "nested heading fails",
+    "body": "> # Quote chapter",
+    "error": "HEADING"
+  },
+  {
+    "name": "empty heading fails",
+    "body": "# ",
+    "error": "HEADING"
+  }
+]

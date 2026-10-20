@@ -1,0 +1,187 @@
+import { test, expect } from '@playwright/test';
+import { readFile, mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+const header='---\nyompub: 0.1-draft.1\ntitle: Local test\nlang: en\n---\n# Start\n\n';
+async function openSample(page,name,title) {
+  await page.locator(`[data-sample="${name}"]`).click();
+  await expect(page.locator('#status')).toContainText(`${title} を開きました`);
+  await expect(page.locator('#error')).toBeHidden();
+}
+test.beforeEach(async({page})=>{ await page.goto('/'); });
+
+test('three books preserve semantics and real layout, navigation and typography',async({page},info)=>{
+  const errors=[]; page.on('pageerror',e=>errors.push(e.message));
+  await openSample(page,'horizontal','The Small Harbour');
+  await expect(page.locator('article')).toHaveAttribute('lang','en');
+  await expect(page.locator('.cover')).toHaveCount(0);
+  await expect(page.locator('#toc a')).toHaveCount(3);
+  await expect(page.locator('article img')).toHaveAttribute('alt','A gold lamp beside three blue waves');
+  await expect(page.locator('article h1')).toHaveCount(2);
+  await expect(page.locator('article blockquote')).toHaveCount(1);
+  await page.locator('#toc a').last().click();
+  await expect(page.locator('#h-3')).toBeFocused();
+  await expect.poll(()=>page.locator('#viewport').evaluate(e=>e.scrollTop)).toBeGreaterThan(0);
+  await page.locator('#font-size').fill('28'); await page.locator('#font-size').dispatchEvent('input');
+  await expect(page.locator('article')).toHaveCSS('font-size','28px');
+  await page.locator('#theme').selectOption('night');
+  await expect(page.locator('#viewport')).toHaveCSS('color','rgb(232, 231, 219)');
+  await page.locator('#theme').selectOption('paper');
+  await page.locator('#font-size').fill('20'); await page.locator('#font-size').dispatchEvent('input');
+  await page.locator('#reader').scrollIntoViewIfNeeded();
+  await page.screenshot({path:`evidence/horizontal-${info.project.name}.png`,fullPage:true});
+
+  await openSample(page,'vertical','月の港');
+  await expect(page.locator('article')).toHaveCSS('writing-mode','vertical-rl');
+  await expect(page.locator('article')).toHaveCSS('direction','ltr');
+  await expect(page.locator('.cover img')).toHaveAttribute('alt','紺色の空に金色の月と白い港');
+  await expect(page.locator('ruby').first()).toContainText('港');
+  await expect(page.locator('ruby rt').first()).toHaveText('みなと');
+  await expect(page.locator('#toc a').first()).toHaveText('第一章　港の灯り');
+  const geometry=await page.locator('article ruby').first().evaluate(r=>{
+    const range=document.createRange(); range.selectNodeContents(r.firstChild);
+    const base=range.getBoundingClientRect(), note=r.querySelector('rt').getBoundingClientRect();
+    return {base:{x:base.x,y:base.y,w:base.width,h:base.height},note:{x:note.x,y:note.y,w:note.width,h:note.height}};
+  });
+  expect(geometry.base.h).toBeGreaterThan(0); expect(geometry.note.h).toBeGreaterThan(0);
+  expect(geometry.note.x).toBeGreaterThan(geometry.base.x);
+  await expect.poll(()=>page.locator('#viewport').evaluate(e=>e.scrollWidth-e.clientWidth)).toBeGreaterThan(100);
+  await page.locator('#toc a').last().click(); await expect(page.locator('#h-3')).toBeFocused();
+  await expect.poll(()=>page.locator('#viewport').evaluate(e=>Math.abs(e.scrollLeft))).toBeGreaterThan(100);
+  await page.locator('#toc a').first().click();
+  await page.locator('#reader').scrollIntoViewIfNeeded();
+  await page.screenshot({path:`evidence/vertical-${info.project.name}.png`,fullPage:true});
+
+  await openSample(page,'rtl','ضوء الميناء');
+  await expect(page.locator('article')).toHaveCSS('direction','rtl');
+  await expect(page.locator('article')).toHaveCSS('writing-mode','horizontal-tb');
+  const run=page.locator('article bdi').first();
+  await expect(run).toHaveAttribute('lang','en'); await expect(run).toHaveCSS('direction','ltr');
+  await expect(run).toHaveCSS('unicode-bidi','isolate'); await expect(run).toHaveText('The Small Harbour (2026)');
+  const rects=await run.evaluate(el=>{
+    const text=el.firstChild;
+    const a=document.createRange(),z=document.createRange();
+    a.setStart(text,0); a.setEnd(text,1); z.setStart(text,text.length-1); z.setEnd(text,text.length);
+    return {first:a.getBoundingClientRect().x,last:z.getBoundingClientRect().x};
+  });
+  expect(rects.first).toBeLessThan(rects.last);
+  await expect(page.locator('bdi[lang="he"]')).toHaveText('שלום');
+  await page.locator('#reader').scrollIntoViewIfNeeded();
+  await page.screenshot({path:`evidence/rtl-${info.project.name}.png`,fullPage:true});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test('local folder load, same-file reload, source and AST downloads',async({page})=>{
+  await page.locator('#folder').setInputFiles(resolve('samples/vertical'));
+  await expect(page.locator('#status')).toContainText('月の港 を開きました');
+  await expect(page.locator('article img')).toHaveCount(2);
+  await page.locator('#folder').setInputFiles(resolve('samples/vertical'));
+  await expect(page.locator('#status')).toContainText('月の港 を開きました');
+  await page.locator('#source-panel summary').click();
+  const sourceDownload=page.waitForEvent('download'); await page.locator('#download-source').click();
+  const sourcePath=await (await sourceDownload).path();
+  expect(await readFile(sourcePath,'utf8')).toBe(await readFile('samples/vertical/book.md','utf8'));
+  const astDownload=page.waitForEvent('download'); await page.locator('#download-ast').click();
+  const ast=JSON.parse(await readFile(await (await astDownload).path(),'utf8'));
+  expect(ast.metadata.writingMode).toBe('vertical-rl'); expect(ast.toc[0].label).toBe('第一章　港の灯り');
+  await page.locator('#close-book').click(); await expect(page.locator('#reader')).toBeHidden();
+  await expect(page.locator('#source')).toHaveText('');
+  await openSample(page,'rtl','ضوء الميناء');
+});
+
+test('invalid files preserve prior book and can recover',async({page})=>{
+  await openSample(page,'horizontal','The Small Harbour');
+  for(const [body,code] of [['<script>window.bad=1</script>','HTML'],['｜broken','RUBY'],['![map](assets/missing.png)','MISSING_FILE'],['[x](javascript:alert(1))','LINK']]) {
+    await page.locator('#manuscript').setInputFiles({name:'book.md',mimeType:'text/markdown',buffer:Buffer.from(header+body)});
+    await expect(page.locator('#error')).toContainText(code);
+    await expect(page.locator('#book-title')).toHaveText('The Small Harbour');
+    expect(await page.evaluate(()=>window.bad)).toBeUndefined();
+  }
+  await page.locator('#manuscript').setInputFiles({name:'book.md',mimeType:'text/markdown',buffer:Buffer.from([0xc0,0xaf])});
+  await expect(page.locator('#error')).toContainText('UTF8');
+  await openSample(page,'vertical','月の港');
+});
+
+test('rapid switches, cancellation, and resource cleanup over repeated sessions',async({page})=>{
+  await page.addInitScript(()=>{
+    window.liveYompubUrls=new Set();
+    const create=URL.createObjectURL.bind(URL), revoke=URL.revokeObjectURL.bind(URL);
+    URL.createObjectURL=b=>{const u=create(b);window.liveYompubUrls.add(u);return u;};
+    URL.revokeObjectURL=u=>{window.liveYompubUrls.delete(u);revoke(u);};
+  });
+  await page.reload();
+  for(let i=0;i<4;i++) {
+    await openSample(page,'horizontal','The Small Harbour');
+    expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(1);
+    await openSample(page,'vertical','月の港');
+    expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(2);
+    // Same JS task: cancel before a worker can commit a book.
+    await page.evaluate(()=>{document.querySelector('[data-sample="rtl"]').click();document.querySelector('#cancel').click();});
+    await expect(page.locator('#status')).toHaveText('読み込みを中断しました。');
+    await expect(page.locator('#book-title')).toHaveText('月の港');
+    await page.evaluate(()=>{document.querySelector('[data-sample="horizontal"]').click();document.querySelector('[data-sample="rtl"]').click();});
+    await expect(page.locator('#status')).toContainText('ضوء الميناء を開きました');
+    expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(1);
+    await page.locator('#close-book').click();
+    expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(0);
+  }
+  await page.locator('#manuscript').dispatchEvent('cancel');
+  await expect(page.locator('#status')).toHaveText('ファイル選択を中断しました。');
+});
+
+test('a signature-valid but undecodable image fails transactionally',async({page})=>{
+  const dir=await mkdtemp(join(tmpdir(),'yompub-browser-'));
+  try {
+    await mkdir(join(dir,'assets'));
+    await writeFile(join(dir,'book.md'),header+'![bad](assets/bad.png)');
+    await writeFile(join(dir,'assets/bad.png'),Buffer.from([137,80,78,71,13,10,26,10]));
+    await openSample(page,'rtl','ضوء الميناء');
+    await page.locator('#folder').setInputFiles(dir);
+    await expect(page.locator('#error')).toContainText('IMAGE');
+    await expect(page.locator('#book-title')).toHaveText('ضوء الميناء');
+    await openSample(page,'horizontal','The Small Harbour');
+  } finally {await rm(dir,{recursive:true,force:true});}
+});
+
+test('local files load with external network blocked and no uploads',async({page})=>{
+  const requests=[]; page.on('request',r=>requests.push({url:r.url(),method:r.method()}));
+  await page.context().route('**/*',route=>{
+    const url=route.request().url();
+    return (url.startsWith('http://127.0.0.1:4178/') || url.startsWith('blob:http://127.0.0.1:4178/')) ? route.continue() : route.abort();
+  });
+  await page.locator('#folder').setInputFiles(resolve('samples/rtl'));
+  await expect(page.locator('#status')).toContainText('ضوء الميناء を開きました');
+  expect(requests.filter(r=>r.method!=='GET'||!(r.url.startsWith('http://127.0.0.1:4178/') || r.url.startsWith('blob:http://127.0.0.1:4178/')))).toEqual([]);
+});
+
+test('cancel a running worker during a long manuscript parse, then reopen',async({page})=>{
+  await openSample(page,'horizontal','The Small Harbour');
+  await page.evaluate(()=>{
+    const status=document.querySelector('#status');
+    window.cancelledDuringParse=false;
+    const observer=new MutationObserver(()=>{
+      if(status.textContent==='原稿を解析しています…') {
+        window.cancelledDuringParse=true;
+        document.querySelector('#cancel').click();
+        observer.disconnect();
+      }
+    });
+    observer.observe(status,{childList:true});
+  });
+  const body=('A harbour and a light. *A promise* [a path](#h-1).\n\n').repeat(30000);
+  await page.locator('#manuscript').setInputFiles({name:'book.md',mimeType:'text/markdown',buffer:Buffer.from(header+body)});
+  await expect.poll(()=>page.evaluate(()=>window.cancelledDuringParse)).toBe(true);
+  await expect(page.locator('#status')).toHaveText('読み込みを中断しました。');
+  await expect(page.locator('#book-title')).toHaveText('The Small Harbour');
+  await openSample(page,'vertical','月の港');
+});
+
+test('vertical-lr, auto direction and a plain manuscript remain renderable',async({page})=>{
+  const source=header.replace('lang: en','lang: ja\ndirection: auto\nwriting-mode: vertical-lr')+'｜空《そら》と｜海《うみ》。';
+  await page.locator('#manuscript').setInputFiles({name:'book.md',mimeType:'text/markdown',buffer:Buffer.from(source)});
+  await expect(page.locator('#status')).toContainText('Local test を開きました');
+  await expect(page.locator('article')).toHaveCSS('writing-mode','vertical-lr');
+  await expect(page.locator('article')).toHaveAttribute('dir','auto');
+  await expect(page.locator('article ruby')).toHaveCount(2);
+});

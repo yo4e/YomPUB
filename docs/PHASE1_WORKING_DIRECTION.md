@@ -109,3 +109,7 @@ At this stage, the rough v0 mental model is:
 with ordinary TOC derived from structure, and audio/video excluded from the initial Core.
 
 This is a working direction, not the final Phase 1 specification.
+
+## Local implementation checkpoint — 2026-10-20
+
+This working direction remains the scope guardrail. The source-first experiment is now represented by [three sample books](../samples/README.md), [recorded Core decisions](CORE_DECISIONS.md), a [normative draft proposal](spec/0.1-draft.1.md), and a minimal parser/CLI/viewer. See [validation and limits](VALIDATION.md). This checkpoint does not finalize the syntax, publish a release or complete the independent-implementation gate.

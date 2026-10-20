@@ -1,131 +1,136 @@
 # YomPUB（よむパブ）
 
-**小さく、開かれ、人が手で書ける、リフロー電子書籍フォーマット。**  
-**A tiny, open, human-writable format for reflowable digital books.**
+**小さく、開かれ、人が手で書ける、リフロー本のための元原稿。**
 
-[日本語](#日本語) / [English](#english)
+テキストエディタで読める `book.md` と画像フォルダから、本を持ち運べる形式を試しています。日本語縦書き・ルビ、RTLと混在テキストを最初から扱い、描画はブラウザの文字組みに任せます。総合執筆アプリやEPUBの置換を目指すものではありません。
 
----
+**現在: Core 0.1.0-draft.1 の規範案＋最小parser/CLI/viewer。実験段階で、将来の互換性はまだ約束しません。** Phase 0とMarkua比較後の継続判断は完了しています（[Issue #7](https://github.com/yo4e/YomPUB/issues/7)）。現在の起点は[Issue #9](https://github.com/yo4e/YomPUB/issues/9)です。
 
-## 日本語
+## まず触る
 
-YomPUB（よむパブ）は、**テキストエディタだけでも本を作れるくらい単純な電子書籍フォーマット**を目指す実験的なOSSプロジェクトです。
+Node.js 22以上とGitが必要です。初回の依存インストールにはネット接続が必要です。
 
-EPUBやPDFを置き換えることが目的ではありません。Webや仮想空間でも軽く扱え、必要ならEPUBやPDFへ変換できる、**シンプルな**「**本の元データ**」を作ります。
+```sh
+git clone https://github.com/yo4e/YomPUB.git
+cd YomPUB
+npm ci
+npm run dev
+```
 
-### こんな本
+表示された **http://127.0.0.1:4178** をブラウザで開き、三冊から選んでください。終了はターミナルで `Ctrl+C`。4178番を使っている場合は `PORT=4180 npm run dev` で変更できます。
 
-最小のYomPUBは、これくらい単純です。
+- **[The Small Harbour](samples/horizontal/book.md)** — 横書き、章節、リンク、画像alt。表紙はありません。
+- **[月の港](samples/vertical/book.md)** — 日本語縦書き、ルビ、明示表紙。本文は**左右にスクロール**します。
+- **[ضوء الميناء](samples/rtl/book.md)** — アラビア語RTLの中に、英語・ヘブライ語・数字・URLを含む本。
+
+目次から移動し、文字サイズを変えてみてください。「原稿と解析結果を確認」から素の原稿を読み、原稿または意味モデルのJSONを保存できます。保存したbook.mdだけでは画像は同梱されません。交換するときは本のフォルダ全体を渡します。
+
+自分の原稿を読むには「本のフォルダを開く」で、`book.md` のあるフォルダを選びます。画像のない本は「book.mdのみ」でも読めます。選択した原稿・画像の解析はブラウザ内で行い、アップロードしません。フォルダ選択に対応するブラウザが必要です。専用エディタはありません。外部のテキストエディタで編集・保存し、同じフォルダを開き直してください。
+
+`npm run dev` は起動時にビルドする小さなローカルサーバーです。ソースコードを変更したら `npm run build` を実行してページを再読込するか、サーバーを再起動してください。外部CDNやアカウントは不要です。`dist/index.html` を `file://` で直接開く方式には対応しません。
+
+## 素の本
 
 ```text
 my-book/
 ├── book.md
 └── assets/
-    ├── cover.jpg
-    └── figure-01.png
+    └── harbour.png
 ```
-
-`book.md` は、専用ツールがなくても人間がそのまま読めます。
 
 ```md
 ---
-title: 月面旅館
-author: 山田佳江
+yompub: 0.1-draft.1
+title: 月の港
+author: 書き手の名前
 lang: ja
+direction: ltr
 writing-mode: vertical-rl
 ---
 
-# 第一章　月面旅館
+# 第一章　港の灯り
 
-月面に旅館ができたのは、夏の終わりだった。
+「まだ、灯りがある。」｜美良《みら》は桟橋で立ち止まった。
 
-![月面旅館](assets/figure-01.png)
+案内板には {{en|ltr|MOON PORT}} と書かれている。
 
-これは｜人工知能《じんこうちのう》についての話でもある。
+![月の下の港](assets/harbour.png)
 ```
 
-YomPUB自体は本のデータを単純に保ち、**表示の仕事はビューワーに任せます。**
+ヘッダはYAMLではなく、一行ずつの文字列です。必須は `yompub`、`title`、`lang`。画像はローカルのPNG/JPEG/WebP。通常の目次は見出しから生成します。ルビは `｜本文《読み》`、短い言語・方向範囲は `{{言語|ltr/rtl/auto|本文}}`。詳しい境界とエスケープは[規範案](docs/spec/0.1-draft.1.md)が正本です。
 
-専用ビューワーがなくても読める。ビューワーを使えば、もっと読みやすい。  
-**Readable without a YomPUB reader. Better with one.**
+## 現状と未検証の範囲
 
-### 基本思想
+| 動いているもの | まだ確認・実装していないもの |
+| --- | --- |
+| 三冊の素の原稿→意味モデル→ブラウザ表示 | 仕様だけから作った独立実装との相互運用 |
+| 日本語縦書き・ルビ、RTL/LTRの混在、構造からの目次 | 長い実在の本を通して読む評価、RTL母語話者の校閲 |
+| フォルダ読込、原稿/JSON保存、文字サイズ/配色、中断・失敗からの復帰 | 支援技術・実機iOS/Android・他の文字体系の組版品質 |
+| Nodeテスト95件（基底CommonMark公式652例の照合を含む）、ブラウザ24件の初回検証 | EPUB/PDF出力、ZIP、脚注・キャプション等の拡張 |
 
-- **手で書ける。** 専用オーサリングソフトを必須にしない。
-- **Coreは小さく。** 普通の本に不要な機能は、規格本体へ入れない。
-- **リフロー前提。** 画面や文字サイズに合わせて本文が流れ直す。
-- **世界中の文字を扱う。** LTR、RTL、縦書きを最初から考える。
-- **表示と変換は外付け。** Web Viewer、DOCX入力、EPUB/PDF出力などは周辺ツールとして作る。
+Coreを固定した完成仕様ではありません。テスト成功は、全言語の出版品質や将来互換性を保証しません。[検証記録](docs/VALIDATION.md)で、実施環境と既知制限を確認できます。PRとmainには[同じ検証を行うCI](https://github.com/yo4e/YomPUB/actions/workflows/ci.yml)があります。チェック結果は対象コミットに対するものです。
 
-現在は、CommonMarkを基礎にした小さなMarkdownプロファイルを有力候補として検討しています。Markdown採用を含め、まだ仕様は確定していません。
+## parser・CLI・viewerの役割
 
-次に進む作業は [`ROADMAP.md`](ROADMAP.md) に整理しています。詳しい初期設計は [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md)、バージョニング方針は [`docs/VERSIONING.md`](docs/VERSIONING.md) にあります。
+| 入口 | 役割 |
+| --- | --- |
+| `src/core.mjs`: `decodeSource(bytes)` → `parseBook(source)` | UTF-8/書式を検証し、`{ book, warnings }`を返す。ファイルアクセスはしない |
+| `src/local.mjs`: `loadLocalBook(path)` | parserに加え、画像の実在・範囲・署名を確認するNode用入口 |
+| `src/cli.mjs`: `validate` / `ast` | 上記の検証結果や意味モデルをターミナルへ出力 |
+| `src/render.mjs`: `renderBook(book, { document, resolveAsset })` | 検証済みASTを意味付きDOMへ変換するブラウザ用入口 |
+| `npm run dev` | ローカルviewer。画像を実際にデコードしてから本を切り替える |
 
-**Status: Pre-spec / Experimental**
+parserをコードから試す場合は、リポジトリ直下のES moduleで次のように使えます。npm配布パッケージではなく、このリポジトリ内の実験用APIです。
 
-名前の **Yom** は、日本語の「読む（yomu）」から。偶然にもヘブライ語の *yom* は「日」を意味します。**1DAYで出版できるくらい軽く。** それもYomPUBの思想です。
+```js
+import { readFile } from 'node:fs/promises';
+import { decodeSource, parseBook } from './src/core.mjs';
 
----
+const bytes = await readFile('samples/vertical/book.md');
+const { book, warnings } = parseBook(decodeSource(bytes));
+console.log(book.metadata, book.toc, warnings);
+```
+
+`parseBook`は不正入力を`YompubError`として拒否します。CLIの画像検証は署名までで、完全な画像デコードはviewerで確認してください。
+
+## 検証・実装者向け
+
+```sh
+# 原稿と参照画像を検証
+npm run validate -- samples/horizontal/book.md samples/vertical/book.md samples/rtl/book.md
+
+# 意味モデルをJSONとして出力（npmの案内文を含めない場合はnodeを直接使用）
+node src/cli.mjs ast samples/vertical/book.md > book.ast.json
+
+# lint、型検査、意味・不正入力・CLIテスト、ビルド
+npm run check
+
+# 画面を占有しない実ブラウザ検証
+npx playwright install chromium webkit
+npm run test:ui
+```
+
+CLIは成功0、原稿/ファイルエラー1、使い方エラー2で終了します。警告・エラーはstderr、ASTはstdoutです。
+
+- [規範案 0.1-draft.1](docs/spec/0.1-draft.1.md) — 書式、Core境界、意味モデル、失敗の扱い
+- [サンプルから決めたこと](docs/CORE_DECISIONS.md) — 採用理由と保留理由
+- [三冊の原稿と確認観点](samples/README.md)
+- [確認手順・実施結果・既知制限](docs/VALIDATION.md)
+- [データだけの適合例](tests/fixtures/conformance.json) / [AST型](src/model.d.ts)
+- [次の検証ゲート](ROADMAP.md) / [Phase 1の方針](docs/PHASE1_WORKING_DIRECTION.md)
+
+依存なしの専用書式実装を主張しているわけではありません。CommonMark 0.31.2を明示的な基底とし、小さな出版意味論を追加しています。未知のMarkdown拡張は有効化せず、HTML・不正なCore記法を黙って削除しません。独立実装やEPUB変換は次の検証対象です。
 
 ## English
 
-YomPUB is an experimental open-source project for a digital book format **simple enough to author by hand in a plain text editor**.
+YomPUB is a tiny, experimental source profile for ordinary reflowable books. A UTF-8 `book.md` plus local images stays readable in a plain text editor. The prototype includes a strict CommonMark-based parser, semantic JSON projection, CLI validator, and local browser reader with Japanese vertical text/ruby and isolated multilingual RTL/LTR runs.
 
-It is not intended to replace EPUB or PDF. YomPUB aims to be a **small, portable source format for books** that is easy to use on the Web and in virtual spaces, while remaining exportable to formats such as EPUB and PDF.
+Clone this repository, enter `YomPUB`, then run `npm ci && npm run dev` and open http://127.0.0.1:4178. Choose a sample or open a folder containing `book.md`. Local files stay in your browser. `npm run check` runs static/unit checks; `npm run test:ui` runs headless Chromium and WebKit after `npx playwright install chromium webkit`.
 
-### A tiny book
+PR/main CI runs the static checks, sample validation and headless browser scenarios on Ubuntu. The initial recorded captures were made on macOS; see [validation scope and remaining work](docs/VALIDATION.md).
 
-A minimal YomPUB book should be almost boring:
-
-```text
-my-book/
-├── book.md
-└── assets/
-    ├── cover.jpg
-    └── figure-01.png
-```
-
-`book.md` remains readable even without YomPUB-specific software.
-
-```md
----
-title: The Moon Inn
-author: A. Writer
-lang: en
-writing-mode: horizontal-tb
----
-
-# Chapter One
-
-The inn on the Moon opened at the end of summer.
-
-![The Moon Inn](assets/figure-01.png)
-```
-
-YomPUB keeps the book data simple and **leaves rendering to the viewer.**
-
-**Readable without a YomPUB reader. Better with one.**
-
-### Principles
-
-- **Human-writable.** No dedicated authoring application is required.
-- **Tiny Core.** Features ordinary books do not need stay out of the base format.
-- **Reflow first.** Text adapts to the reading environment and font size.
-- **International from the start.** LTR, RTL, and vertical writing are first-class requirements.
-- **Rendering and conversion stay outside the format.** Web viewers, DOCX import, and EPUB/PDF export belong in companion tools.
-
-A small CommonMark-based Markdown profile is currently the leading candidate, but even Markdown is not yet a final decision.
-
-See [`ROADMAP.md`](ROADMAP.md) for the next work, [`docs/DESIGN_DRAFT.md`](docs/DESIGN_DRAFT.md) for the initial design notes, and [`docs/VERSIONING.md`](docs/VERSIONING.md) for the versioning policy.
-
-**Status: Pre-spec / Experimental**
-
-The name **Yom** comes from the Japanese *yomu* (読む), “to read.” By coincidence, Hebrew *yom* means “day” — a nice fit for the idea that publishing should be light enough to happen in a day.
-
----
+The [draft specification](docs/spec/0.1-draft.1.md) is written in English for independent implementers. This is not a published compatibility promise or an EPUB/PDF exporter. Footnotes, captions, arbitrary HTML/CSS/JS, fixed layout, audio/video, ZIP packaging and an integrated authoring app are outside this slice.
 
 ## License / ライセンス
 
-YomPUB の仕様案、設計文書、およびこのリポジトリで今後公開されるコードは、個別に別条件が示されない限り [MIT License](LICENSE) で公開します。
-
-YomPUB specification drafts, design documents, and future code published in this repository are available under the [MIT License](LICENSE) unless a specific file states otherwise.
+Original specifications, code and purpose-written samples are [MIT](LICENSE), except where separately identified. The imported CommonMark conformance corpus has its own attribution and CC BY-SA 4.0 terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
