@@ -8,6 +8,12 @@
 
 ## まず触る
 
+**[ブラウザで試用版を開く](https://yo4e.github.io/YomPUB/)** — インストール不要。三冊のサンプルを選び、縦書き・ルビ・RTL混在と原稿表示を試せます。実験段階のreaderで、将来の書式互換性はまだ約束していません。
+
+自分のフォルダを開いた場合も原稿・画像はブラウザ内で処理され、送信されません。試用版のアプリと既存サンプルの配信元はGitHub Pagesです。公開対象はアプリと既存の三冊・参照画像だけです。
+
+手元で動かす場合：
+
 Node.js 22以上とGitが必要です。初回の依存インストールにはネット接続が必要です。
 
 ```sh
@@ -125,9 +131,11 @@ CLIは成功0、原稿/ファイルエラー1、使い方エラー2で終了し�
 
 YomPUB is a tiny, experimental source profile for ordinary reflowable books. A UTF-8 `book.md` plus local images stays readable in a plain text editor. The prototype includes a strict CommonMark-based parser, semantic JSON projection, CLI validator, and local browser reader with Japanese vertical text/ruby and isolated multilingual RTL/LTR runs.
 
-Clone this repository, enter `YomPUB`, then run `npm ci && npm run dev` and open http://127.0.0.1:4178. Choose a sample or open a folder containing `book.md`. Local files stay in your browser. `npm run check` runs static/unit checks; `npm run test:ui` runs headless Chromium and WebKit after `npx playwright install chromium webkit`.
+[Open the trial reader](https://yo4e.github.io/YomPUB/) without installing anything. Or clone this repository, enter `YomPUB`, then run `npm ci && npm run dev` and open http://127.0.0.1:4178. Choose a sample or open a folder containing `book.md`. Local files stay in your browser. `npm run check` runs static/unit checks; `npm run test:ui` runs headless Chromium and WebKit after `npx playwright install chromium webkit`.
 
 PR/main CI runs the static checks, sample validation and headless browser scenarios on Ubuntu. The initial recorded captures were made on macOS; see [validation scope and remaining work](docs/VALIDATION.md).
+
+GitHub Pages publishes the checked main commit, then runs the browser suite against the actual HTTPS URL. See [deployment and public verification](docs/PAGES.md).
 
 The [draft specification](docs/spec/0.1-draft.1.md) is written in English for independent implementers. This is not a published compatibility promise or an EPUB/PDF exporter. Footnotes, captions, arbitrary HTML/CSS/JS, fixed layout, audio/video, ZIP packaging and an integrated authoring app are outside this slice.
 

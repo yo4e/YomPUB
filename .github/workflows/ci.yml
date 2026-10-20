@@ -33,6 +33,11 @@ jobs:
         run: npm run test:ui
       - name: Repeat folder edits and reloads in WebKit
         run: npx playwright test --project=webkit-desktop --grep 'local folder load' --repeat-each=5 --output=test-results/reload
+      - name: Verify project-site paths
+        run: npm run test:ui
+        env:
+          BASE_PATH: /YomPUB/
+          PORT: '4186'
       - name: Preserve browser failure diagnostics
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
