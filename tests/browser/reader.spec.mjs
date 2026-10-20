@@ -8,6 +8,29 @@ async function openSample(page,name,title) {
   await expect(page.locator('#status')).toContainText(`${title} を開きました`);
   await expect(page.locator('#error')).toBeHidden();
 }
+async function expectVerticalCharacterSpacing(page) {
+  // A visible ruby rectangle alone does not catch zero-advance CJK glyphs.
+  const pairs=await page.locator('article p').first().evaluate(el=>{
+    const nodes=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),result=[];
+    while(nodes.nextNode()) {
+      const node=nodes.currentNode;
+      if(node.parentElement.closest('rt,rp')) continue;
+      const fontSize=parseFloat(getComputedStyle(node.parentElement).fontSize);
+      for(let i=1;i<node.length;i++) {
+        const text=node.data.slice(i-1,i+1);
+        if(!/^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]{2}$/u.test(text)) continue;
+        const first=document.createRange(),next=document.createRange();
+        first.setStart(node,i-1); first.setEnd(node,i);
+        next.setStart(node,i); next.setEnd(node,i+1);
+        const a=first.getBoundingClientRect(),b=next.getBoundingClientRect();
+        if(Math.abs(a.x-b.x)<1) result.push({text,advance:(b.y-a.y)/fontSize});
+      }
+    }
+    return result;
+  });
+  expect(pairs.length).toBeGreaterThan(10);
+  expect(pairs.filter(pair=>pair.advance<.8)).toEqual([]);
+}
 test.beforeAll(async({request,baseURL})=>{
   if (process.env.YOMPUB_EXPECT_COMMIT) {
     // Pages deployment completion and CDN availability can be a few seconds apart.
@@ -55,12 +78,14 @@ test('three books preserve semantics and real layout, navigation and typography'
   });
   expect(geometry.base.h).toBeGreaterThan(0); expect(geometry.note.h).toBeGreaterThan(0);
   expect(geometry.note.x).toBeGreaterThan(geometry.base.x);
+  await expectVerticalCharacterSpacing(page);
   await expect.poll(()=>page.locator('#viewport').evaluate(e=>e.scrollWidth-e.clientWidth)).toBeGreaterThan(100);
   await page.locator('#toc a').last().click(); await expect(page.locator('#h-3')).toBeFocused();
   await expect.poll(()=>page.locator('#viewport').evaluate(e=>Math.abs(e.scrollLeft))).toBeGreaterThan(100);
   await page.locator('#toc a').first().click();
   await page.locator('#reader').scrollIntoViewIfNeeded();
   await page.screenshot({path:`evidence/vertical-${info.project.name}.png`,fullPage:true});
+  await expectVerticalCharacterSpacing(page);
 
   await openSample(page,'rtl','ضوء الميناء');
   await expect(page.locator('article')).toHaveCSS('direction','rtl');

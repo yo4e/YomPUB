@@ -253,6 +253,10 @@ main {
   line-height:1.9;
   overflow-wrap:anywhere;
 }
+.book:lang(ja) {
+  /* Prefer Japanese fonts with vertical metrics before generic CJK fallback. */
+  font-family:"Yu Mincho","Hiragino Mincho ProN","Noto Serif CJK JP","Noto Serif JP","IPAexMincho","IPAMincho","Noto Sans CJK JP","Noto Sans JP","IPAGothic",serif;
+}
 .book[data-mode="horizontal-tb"] {
   max-width:36em;
   margin-inline:auto;
