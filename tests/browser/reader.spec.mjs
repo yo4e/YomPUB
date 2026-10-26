@@ -58,7 +58,7 @@ test('three books preserve semantics and real layout, navigation and typography'
   await page.locator('#font-size').fill('28'); await page.locator('#font-size').dispatchEvent('input');
   await expect(page.locator('article')).toHaveCSS('font-size','28px');
   await page.locator('#theme').selectOption('night');
-  await expect(page.locator('#viewport')).toHaveCSS('color','rgb(232, 231, 219)');
+  await expect(page.locator('#viewport')).toHaveCSS('color','rgb(255, 255, 255)');
   await page.locator('#theme').selectOption('paper');
   await page.locator('#font-size').fill('20'); await page.locator('#font-size').dispatchEvent('input');
   await page.locator('#reader').scrollIntoViewIfNeeded();
@@ -177,7 +177,7 @@ test('rapid switches, cancellation, and resource cleanup over repeated sessions'
     await openSample(page,'vertical','月の港');
     expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(2);
     // Same JS task: cancel before a worker can commit a book.
-    await page.evaluate(()=>{document.querySelector('[data-sample="rtl"]').click();document.querySelector('#cancel').click();});
+    await page.evaluate(()=>{document.querySelector('[data-sample="rtl"]').click();document.querySelector('[data-yompub-reader]').shadowRoot.querySelector('#cancel').click();});
     await expect(page.locator('#status')).toHaveText('読み込みを中断しました。');
     await expect(page.locator('#book-title')).toHaveText('月の港');
     await page.evaluate(()=>{document.querySelector('[data-sample="horizontal"]').click();document.querySelector('[data-sample="rtl"]').click();});
@@ -187,7 +187,7 @@ test('rapid switches, cancellation, and resource cleanup over repeated sessions'
     expect(await page.evaluate(()=>window.liveYompubUrls.size)).toBe(0);
   }
   await page.locator('#manuscript').dispatchEvent('cancel');
-  await expect(page.locator('#status')).toHaveText('ファイル選択を中断しました。');
+  await expect(page.locator('#file-status')).toHaveText('ファイル選択を中断しました。');
 });
 
 test('a signature-valid but undecodable image fails transactionally',async({page})=>{
@@ -220,12 +220,12 @@ test('local files load with external network blocked and no uploads',async({page
 test('cancel a running worker during a long manuscript parse, then reopen',async({page})=>{
   await openSample(page,'horizontal','The Small Harbour');
   await page.evaluate(()=>{
-    const status=document.querySelector('#status');
+    const status=document.querySelector('[data-yompub-reader]').shadowRoot.querySelector('#status');
     window.cancelledDuringParse=false;
     const observer=new MutationObserver(()=>{
       if(status.textContent==='原稿を解析しています…') {
         window.cancelledDuringParse=true;
-        document.querySelector('#cancel').click();
+        document.querySelector('[data-yompub-reader]').shadowRoot.querySelector('#cancel').click();
         observer.disconnect();
       }
     });

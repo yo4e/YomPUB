@@ -25,13 +25,8 @@
         <p class="hint">book.mdと画像のあるフォルダを選択。選んだファイルは、このブラウザ内だけで読みます。</p>
       </div>
     </section>
-    <div class="load-state"><p id="status" role="status" aria-live="polite">サンプルを選ぶか、自分の本を開いてください。</p><button id="cancel" type="button" hidden>読み込みを中断</button></div>
-    <p id="error" role="alert" hidden></p>
-    <section id="reader" hidden aria-label="本のビューア">
-      <div class="reader-top"><div><p class="eyebrow" id="mode-label"></p><h2 id="book-title"></h2><p id="book-author"></p></div><div class="controls"><label>文字サイズ <input id="font-size" type="range" min="16" max="32" value="20"><output id="font-value">20</output></label><label>配色 <select id="theme"><option value="paper">紙</option><option value="night">夜</option></select></label><button id="close-book" type="button">本を閉じる</button></div></div>
-      <div class="reading-layout"><nav id="toc" aria-label="目次"></nav><div id="viewport" tabindex="0" role="region" aria-label="本文。縦書きでは左右にスクロールできます。"></div></div>
-      <details id="source-panel"><summary>原稿と解析結果を確認</summary><p class="hint">これは試読用ビューアです。編集はテキストエディタで行い、保存したフォルダを開き直してください。</p><div class="source-actions"><button id="download-source" type="button">原稿を保存</button><button id="download-ast" type="button">意味モデル（JSON）を保存</button></div><pre id="source" tabindex="0" dir="auto"></pre><pre id="warnings"></pre></details>
-    </section>
+    <p id="file-status" role="status"></p>
+    <div id="reader-mount"></div>
   </main>
   <footer><span>人が書ける。意味を持ち運べる。</span><span>実験的な仕様案 · 互換性の約束はまだありません</span></footer>
 </body>

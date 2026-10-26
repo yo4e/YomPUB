@@ -1,25 +1,19 @@
 import { decodeSource, parseBook, YompubError, MAX_SOURCE_BYTES } from '../src/core.mjs';
 import { imageType, MAX_ASSET_BYTES, MAX_TOTAL_ASSET_BYTES } from '../src/assets.mjs';
-/** @typedef {{kind:'sample', sample:string}|{kind:'files', files:{path:string,file:File}[]}} LoadRequest */
-/** @param {string} url */
-async function fetchBytes(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new YompubError('FETCH', `Could not read ${url} (${response.status}).`);
-  return new Uint8Array(await response.arrayBuffer());
-}
+/** @typedef {{kind:'files', files:import('../src/reader-types.js').InputFile[]}} LoadRequest */
 /** @param {MessageEvent<LoadRequest>} event */
 self.onmessage = async event => {
   try {
     const request = event.data;
     /** @type {(path:string) => Promise<Uint8Array>} */ let read;
-    if (request.kind === 'sample') {
-      if (!['horizontal','vertical','rtl'].includes(request.sample)) throw new YompubError('SAMPLE', 'Unknown sample.');
-      read = path => fetchBytes(new URL(`samples/${request.sample}/${path}`, self.location.href).href);
-    } else {
+    {
       const files = request.files;
+      if (request.kind !== 'files' || !Array.isArray(files)) throw new YompubError('FILE', 'Expected a list of publication files.');
       if (files.length > 2000) throw new YompubError('LIMIT', 'Select a book folder with at most 2000 files.');
       const map = new Map();
-      for (const {path, file} of files) {
+      for (const entry of files) {
+        if (!entry || typeof entry.path !== 'string' || !(entry.file instanceof Blob)) throw new YompubError('FILE', 'Each entry must contain a relative path and a Blob or File.');
+        const {path, file} = entry;
         if (map.has(path)) throw new YompubError('FILE', `Duplicate file: ${path}`);
         map.set(path, file);
       }
