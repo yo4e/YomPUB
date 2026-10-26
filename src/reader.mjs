@@ -50,6 +50,7 @@ export function createReader(container, options = {}) {
   /** @param {string} state */
   function notify(state) {
     element.dispatchEvent(new win.CustomEvent('yompub-state', { bubbles:true, detail:{ state, hasBook:current !== null, title:current?.book.metadata.title ?? null } }));
+    queuePosition();
   }
   /** @param {boolean} busy */
   function setBusy(busy) { get('cancel').hidden = !busy; if (busy) reader.setAttribute('aria-busy','true'); else reader.removeAttribute('aria-busy'); }
@@ -119,12 +120,15 @@ export function createReader(container, options = {}) {
   }
   viewport.addEventListener('scroll',notifyPosition,{signal:events.signal});
   let positionFrame = 0;
-  // Hosts may change their layout in response to position updates. Deliver resize
-  // notifications after the observer loop, and coalesce them to one per frame.
-  const resize = new win.ResizeObserver(() => {
-    if (!positionFrame) positionFrame = win.requestAnimationFrame(() => { positionFrame = 0; notifyPosition(); });
-  });
-  resize.observe(viewport);
+  function queuePosition() {
+    if (!destroyed && !positionFrame) positionFrame = win.requestAnimationFrame(() => { positionFrame = 0; notifyPosition(); });
+  }
+  // Observe the host-sized boundary, not the scrolling flex child: WebKit can
+  // report an observer loop during the child's internal reflow even with a
+  // no-op callback. Internal UI/state transitions queue their own measurement.
+  const resize = new win.ResizeObserver(queuePosition);
+  resize.observe(element);
+  get('source-panel').addEventListener('toggle',queuePosition,{signal:events.signal});
   /** Resolve a logical heading within this book and scroll only its viewport.
    * @param {string} id
    */

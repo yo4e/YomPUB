@@ -170,6 +170,10 @@ test('position listeners may resize their host without a ResizeObserver delivery
   await expect.poll(()=>mount(page,'one').evaluate(el=>el.getBoundingClientRect().height)).toBe(500);
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   expect(await page.evaluate(()=>window.resources.errors)).toEqual([]);
+  const beforePanel=await page.evaluate(()=>({count:window.positionChanges,height:document.querySelector('#mount-one').firstElementChild.shadowRoot.querySelector('#viewport').clientHeight}));
+  await mount(page,'one').locator('#source-panel').evaluate(el=>{el.open=true;});
+  await expect.poll(()=>page.evaluate(()=>window.positionChanges)).toBeGreaterThan(beforePanel.count);
+  expect(await mount(page,'one').locator('#viewport').evaluate(el=>el.clientHeight)).toBeLessThan(beforePanel.height);
   const result=await page.evaluate(async()=>{
     const {readers}=await import('./embed-demo.mjs'),reader=readers.get('one');
     reader.element.parentElement.style.height='480px';reader.destroy();
