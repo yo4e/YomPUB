@@ -22,9 +22,11 @@ test('host styles, independent settings and container dimensions',async({page},i
   const before=await page.evaluate(hostState);
   expect(before).toEqual({margin:'24px',padding:'3px 8px',font:'13px',color:'rgb(128, 0, 128)',theme:undefined,rootFont:''});
   const a=mount(page,'one'),b=mount(page,'two');
+  await a.locator('#reading-settings summary').click();
   await a.locator('#font-size').fill('28');await a.locator('#font-size').dispatchEvent('input');await a.locator('#theme').selectOption('night');
   await expect(a.locator('article')).toHaveCSS('font-size','28px');await expect(b.locator('article')).toHaveCSS('font-size','20px');
   await expect(a.locator('#viewport')).toHaveCSS('color','rgb(255, 255, 255)');await expect(b.locator('#viewport')).toHaveCSS('color','rgb(0, 0, 0)');
+  await a.locator('#reading-settings summary').click();
   expect(await page.evaluate(hostState)).toEqual(before);
   const sizes=await page.locator('.mount').evaluateAll(elements=>elements.map(el=>{const root=el.firstElementChild.shadowRoot;const frame=el.getBoundingClientRect(),view=root.querySelector('#viewport').getBoundingClientRect(),toc=root.querySelector('#toc').getBoundingClientRect();return {height:frame.height,viewHeight:view.height,inside:view.bottom<=frame.bottom+1&&view.right<=frame.right+1,stacked:toc.bottom<=view.top+1,width:frame.width};}));
   for(const size of sizes) {expect(size.height).toBe(620);expect(size.inside).toBe(true);expect(size.viewHeight).toBeGreaterThan(150);expect(size.stacked).toBe(size.width<540);}

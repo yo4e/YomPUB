@@ -12,10 +12,13 @@ test('plain day/night colors keep blue links readable and preserve reading layou
   await page.goto('./');
   await page.locator('[data-sample="vertical"]').click();
   await expect(page.locator('#status')).toContainText('月の港 を開きました');
+  await page.locator('#reading-settings summary').click();
   await page.getByLabel('文字サイズ',{exact:true}).fill('28');
   await page.getByLabel('行間',{exact:true}).fill('2.2');
   await page.getByLabel('書体',{exact:true}).selectOption('gothic');
+  await page.locator('#reading-settings summary').click();
   await page.locator('#toc a').first().click();
+  await page.locator('#reading-settings summary').click();
   const article=await page.locator('article').elementHandle();
   const geometry=()=>page.locator('#viewport').evaluate(view=>({left:view.scrollLeft,top:view.scrollTop,width:view.clientWidth,height:view.clientHeight,scrollWidth:view.scrollWidth}));
   const before=await geometry();
@@ -45,6 +48,7 @@ test('plain day/night colors keep blue links readable and preserve reading layou
     await expect(page.locator('ruby rt').first()).toHaveText('みなと');
     await page.locator('#reader-mount').screenshot({path:`evidence/palette-2026-10-26/${theme}-${info.project.name}.png`});
   }
+  await page.locator('#reading-settings summary').click();
   await page.locator('#toc a').last().click();
   await expect(page.locator('#h-3')).toBeFocused();
   expect(Math.abs((await geometry()).left)).toBeGreaterThan(Math.abs(before.left));
