@@ -37,6 +37,7 @@ export function createReader(container, options = {}) {
   const lineHeight = /** @type {HTMLInputElement} */ (get('line-height'));
   const fontFamily = /** @type {HTMLSelectElement} */ (get('font-family'));
   const theme = /** @type {HTMLSelectElement} */ (get('theme'));
+  const settings = /** @type {HTMLDetailsElement} */ (get('reading-settings'));
   const events = new AbortController();
   /** @type {Job|null} */ let active = null;
   /** @type {(Snapshot & {urls:string[]})|null} */ let current = null;
@@ -90,7 +91,7 @@ export function createReader(container, options = {}) {
     if (value.lineHeight !== undefined) { shell.style.setProperty('--line-height',String(value.lineHeight)); lineHeight.value = String(value.lineHeight); get('line-value').textContent = `${value.lineHeight}倍`; lineHeight.setAttribute('aria-valuetext',`${value.lineHeight}倍`); }
     if (value.fontFamily !== undefined) { shell.dataset.fontFamily = value.fontFamily; fontFamily.value = value.fontFamily; }
     if (value.theme !== undefined) { shell.dataset.theme = value.theme; element.dataset.yompubTheme = value.theme; theme.value = value.theme; }
-    if (value.chrome !== undefined) shell.dataset.chrome = value.chrome;
+    if (value.chrome !== undefined) { shell.dataset.chrome = value.chrome; if (value.chrome === 'none') settings.open = false; }
     if (current && reflows && readingAnchor) {
       readingAnchor.restore?.();
       Object.assign(readingAnchor, {left:viewport.scrollLeft, top:viewport.scrollTop, width:viewport.clientWidth, height:viewport.clientHeight});
@@ -178,7 +179,7 @@ export function createReader(container, options = {}) {
           }
           get('toc').replaceChildren(list); get('source').textContent = result.source;
           get('warnings').textContent = result.warnings.map(w => `${w.code}: ${w.message}`).join('\n');
-          reader.hidden = false; viewport.scrollTop = 0; viewport.scrollLeft = 0;
+          settings.open = false; reader.hidden = false; viewport.scrollTop = 0; viewport.scrollLeft = 0;
           active = null; worker.terminate(); job.worker = null; setBusy(false);
           status.textContent = `${metadata.title} を開きました。${result.book.toc.length}項目の目次。`;
           job.resolve({ status:'opened' }); notify('open');
@@ -213,7 +214,7 @@ export function createReader(container, options = {}) {
     if (destroyed || revision !== operation) return;
     if (current) revoke(current.urls); current = null; readingAnchor = null; clearDownloads();
     viewport.replaceChildren(); get('toc').replaceChildren(); get('source').textContent = ''; get('warnings').textContent = '';
-    reader.hidden = true; errorBox.hidden = true; setBusy(false); status.textContent = '本を閉じました。次の本を選んでください。';
+    settings.open = false; reader.hidden = true; errorBox.hidden = true; setBusy(false); status.textContent = '本を閉じました。次の本を選んでください。';
     element.focus({ preventScroll:true }); notify('closed');
   }
   function destroy() {
@@ -229,6 +230,12 @@ export function createReader(container, options = {}) {
   }
   get('cancel').addEventListener('click',cancel,{signal:events.signal});
   get('close-book').addEventListener('click',close,{signal:events.signal});
+  settings.addEventListener('keydown',event=>{
+    if (event.key === 'Escape' && settings.open) {
+      event.preventDefault(); event.stopPropagation(); settings.open = false;
+      settings.querySelector('summary')?.focus({preventScroll:true});
+    }
+  },{signal:events.signal});
   font.addEventListener('input',()=>setOptions({fontSize:Number(font.value)}),{signal:events.signal});
   lineHeight.addEventListener('input',()=>setOptions({lineHeight:Number(lineHeight.value)}),{signal:events.signal});
   fontFamily.addEventListener('change',()=>setOptions({fontFamily:/** @type {'mincho'|'gothic'} */(fontFamily.value)}),{signal:events.signal});

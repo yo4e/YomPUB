@@ -8,6 +8,7 @@ test('white reader exposes live typography controls, ruby and nonzero Japanese a
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(page.locator('html')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('.reading-layout')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await page.locator('#reading-settings summary').click();
   for (const [family, size, line] of [['gothic',32,2.4], ['mincho',16,1.6], ['mincho',24,2]]) {
     await page.getByLabel('書体', {exact:true}).selectOption(family);
     await page.getByLabel('文字サイズ', {exact:true}).fill(String(size));
@@ -17,7 +18,9 @@ test('white reader exposes live typography controls, ruby and nonzero Japanese a
     await expect(page.locator('article')).toHaveCSS('font-family', new RegExp(family === 'gothic' ? 'Yu Gothic' : 'Yu Mincho'));
     await expect(page.locator('#font-value')).toHaveText(`${size}px`);
     await expect(page.locator('#line-value')).toHaveText(`${line}倍`);
+    await page.locator('#reading-settings summary').click();
     await page.locator('#toc a').first().click();
+    await page.locator('#reading-settings summary').click();
     const geometry = await page.locator('article p').first().evaluate(p => {
       const nodes = document.createTreeWalker(p, NodeFilter.SHOW_TEXT), advances = [];
       while (nodes.nextNode()) {

@@ -55,12 +55,14 @@ test('three books preserve semantics and real layout, navigation and typography'
   await page.locator('#toc a').last().click();
   await expect(page.locator('#h-3')).toBeFocused();
   await expect.poll(()=>page.locator('#viewport').evaluate(e=>e.scrollTop)).toBeGreaterThan(0);
+  await page.locator('#reading-settings summary').click();
   await page.locator('#font-size').fill('28'); await page.locator('#font-size').dispatchEvent('input');
   await expect(page.locator('article')).toHaveCSS('font-size','28px');
   await page.locator('#theme').selectOption('night');
   await expect(page.locator('#viewport')).toHaveCSS('color','rgb(255, 255, 255)');
   await page.locator('#theme').selectOption('paper');
   await page.locator('#font-size').fill('20'); await page.locator('#font-size').dispatchEvent('input');
+  await page.locator('#reading-settings summary').click();
   await page.locator('#reader').scrollIntoViewIfNeeded();
   await page.screenshot({path:`evidence/horizontal-${info.project.name}.png`,fullPage:true});
 
