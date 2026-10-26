@@ -118,7 +118,13 @@ export function createReader(container, options = {}) {
     return true;
   }
   viewport.addEventListener('scroll',notifyPosition,{signal:events.signal});
-  const resize = new win.ResizeObserver(notifyPosition); resize.observe(viewport);
+  let positionFrame = 0;
+  // Hosts may change their layout in response to position updates. Deliver resize
+  // notifications after the observer loop, and coalesce them to one per frame.
+  const resize = new win.ResizeObserver(() => {
+    if (!positionFrame) positionFrame = win.requestAnimationFrame(() => { positionFrame = 0; notifyPosition(); });
+  });
+  resize.observe(viewport);
   /** Resolve a logical heading within this book and scroll only its viewport.
    * @param {string} id
    */
@@ -209,7 +215,7 @@ export function createReader(container, options = {}) {
   function destroy() {
     if (destroyed) return;
     destroyed = true; ++operation; stop('destroyed'); if (current) revoke(current.urls); current = null; readingAnchor = null;
-    clearDownloads(); events.abort(); resize.disconnect(); viewport.replaceChildren(); reader.replaceChildren(); root.replaceChildren(); notify('destroyed'); element.remove();
+    clearDownloads(); events.abort(); resize.disconnect(); win.cancelAnimationFrame(positionFrame); positionFrame = 0; viewport.replaceChildren(); reader.replaceChildren(); root.replaceChildren(); notify('destroyed'); element.remove();
   }
   /** @param {string} text @param {string} name @param {string} type */
   function download(text,name,type) {

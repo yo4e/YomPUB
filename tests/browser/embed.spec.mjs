@@ -159,3 +159,23 @@ test('host abort handlers may destroy or start a newer load synchronously',async
   expect(results.superseded.status).toBe('cancelled');expect(results.pending.status).toBe('cancelled');expect(results.latest.status).toBe('opened');expect(results.source).toContain('event wins');
   expect(await page.evaluate(()=>({urls:window.resources.urls.size,workers:window.resources.workers.size,errors:window.resources.errors}))).toEqual({urls:3,workers:0,errors:[]});
 });
+
+test('position listeners may resize their host without a ResizeObserver delivery loop',async({page})=>{
+  await page.evaluate(async()=>{
+    const {readers}=await import('./embed-demo.mjs'),reader=readers.get('one'),mount=reader.element.parentElement;
+    window.positionChanges=0;
+    reader.element.addEventListener('yompub-position',()=>{if(++window.positionChanges===1)mount.style.height='500px';});
+    mount.style.height='580px';
+  });
+  await expect.poll(()=>mount(page,'one').evaluate(el=>el.getBoundingClientRect().height)).toBe(500);
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  expect(await page.evaluate(()=>window.resources.errors)).toEqual([]);
+  const result=await page.evaluate(async()=>{
+    const {readers}=await import('./embed-demo.mjs'),reader=readers.get('one');
+    reader.element.parentElement.style.height='480px';reader.destroy();
+    const count=window.positionChanges;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    return {before:count,after:window.positionChanges,errors:window.resources.errors};
+  });
+  expect(result.after).toBe(result.before);expect(result.errors).toEqual([]);
+});

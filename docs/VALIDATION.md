@@ -25,11 +25,13 @@ macOS arm64 / Node.js 22.23.4 / Playwright 1.61.1で、画面を占有しない�
 | --- | --- |
 | `npm run check` | lint・strict型検査・Node 96件・ビルドが成功 |
 | 三冊のCLI検証 | 原稿・画像署名を検証して成功 |
-| `CI=1 PORT=4187 npm run test:ui` | Chromium PC / 狭幅 / WebKit PC、69件成功 |
-| `CI=1 PORT=4187 BASE_PATH=/YomPUB/ npm run test:ui` | 同じ69件成功。reader・Worker・サンプルの相対URLを確認 |
+| `CI=1 PORT=4187 npm run test:ui` | Chromium PC / 狭幅 / WebKit PC、72件成功 |
+| `CI=1 PORT=4187 BASE_PATH=/YomPUB/ npm run test:ui` | 同じ72件成功。reader・Worker・サンプルの相対URLを確認 |
 | WebKitの同一フォルダ再読込 | `--grep 'local folder load' --repeat-each=5`、5件成功 |
 
 回帰検証は縦書きの字送り・ルビ位置、横書き/左右の縦書きでの読み位置、先頭/末尾、設定の不正値と原子的な拒否、表示中の本の保持、昼夜の青リンクのコントラスト、独立した埋め込みのCSS/ID/寿命、読込中の中断と破棄を含む。テンプレートのサイトファイルは別リポジトリで管理する。
+
+初回Ubuntu CIではWebKitの中断・再生成中にResizeObserverの通知競合を検出。ホストが位置通知で自身の高さを変更する回帰テストでも3構成すべてで再現した。リサイズ由来の位置通知を次フレームへ集約し、destroy時に予約を解除するよう修正した。エラーの無視やテストのskipは行っていない。
 
 読み位置を保っても、文字組みの変更で総スクロール量が変わるため進捗%は変わりうる。表示設定はインスタンス内だけ保持し、再読込を越える保存は行わない。実機iOS/Android・Firefox・支援技術・長い実本での読書評価は未実施。CIと公開HTTPSの結果は該当PRおよびActionsで確認する。
 
